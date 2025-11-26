@@ -12,10 +12,14 @@
     "@mdx-js/loader": "^3.1.0",
     "@mdx-js/react": "^3.1.0",
     "@next/mdx": "^15.0.0",
+    "@tailwindcss/typography": "^0.5.19",
     "lucide-react": "^0.555.0",
+    "mermaid": "^11.12.1",
     "next": "^15.0.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-mermaid2": "^0.1.4",
+    "react-wrap-balancer": "^1.1.1"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
