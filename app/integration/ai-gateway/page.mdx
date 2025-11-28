@@ -1,0 +1,415 @@
+export const metadata = {
+  title: 'AI Gateway Integration',
+  description: 'How to use Vercel AI Gateway with BYOK in AICodeRally applications'
+}
+
+# AI Gateway Integration Guide
+
+Complete guide to integrating Vercel AI Gateway with BYOK (Bring Your Own Key) in your AICodeRally applications.
+
+## Quick Start
+
+### 1. Environment Setup
+
+Add to your `.env.local`:
+
+```bash
+# Provider API Keys
+ANTHROPIC_API_KEY="sk-ant-..."
+OPENAI_API_KEY="sk-proj-..."
+
+# Gateway URLs
+ANTHROPIC_BASE_URL="https://api.vercel.ai/v1/anthropic"
+OPENAI_BASE_URL="https://api.vercel.ai/v1/openai"
+GEMINI_BASE_URL="https://api.vercel.ai/v1/google"
+
+# Unified Gateway
+AI_GATEWAY_URL="https://ai-gateway.vercel.sh/v1/chat/completions"
+
+# Authentication
+VERCEL_OIDC_TOKEN="[from vercel env pull]"
+```
+
+### 2. Refresh Token
+
+```bash
+# Token expires every 12 hours
+vercel env pull
+```
+
+### 3. Test Connection
+
+```bash
+node test-gateway-final.mjs
+```
+
+## Usage Examples
+
+### Next.js API Route
+
+```typescript
+// app/api/chat/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function POST(req: NextRequest) {
+  const { message } = await req.json();
+
+  const response = await fetch(process.env.AI_GATEWAY_URL!, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${process.env.VERCEL_OIDC_TOKEN}`,
+    },
+    body: JSON.stringify({
+      model: 'anthropic/claude-sonnet-4-5',
+      messages: [{ role: 'user', content: message }],
+      max_tokens: 1000,
+    }),
+  });
+
+  const data = await response.json();
+  return NextResponse.json({
+    reply: data.choices[0].message.content
+  });
+}
+```
+
+### React Component
+
+```typescript
+'use client';
+
+import { useState } from 'react';
+
+export default function ChatBox() {
+  const [message, setMessage] = useState('');
+  const [reply, setReply] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const sendMessage = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message }),
+      });
+      const data = await res.json();
+      setReply(data.reply);
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      <textarea
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        placeholder="Ask Claude anything..."
+      />
+      <button onClick={sendMessage} disabled={loading}>
+        {loading ? 'Thinking...' : 'Send'}
+      </button>
+      {reply && <div className="mt-4 p-4 bg-gray-100">{reply}</div>}
+    </div>
+  );
+}
+```
+
+### Server Action
+
+```typescript
+// app/actions/ai.ts
+'use server';
+
+export async function askClaude(question: string) {
+  const response = await fetch(process.env.AI_GATEWAY_URL!, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${process.env.VERCEL_OIDC_TOKEN}`,
+    },
+    body: JSON.stringify({
+      model: 'anthropic/claude-sonnet-4-5',
+      messages: [{ role: 'user', content: question }],
+      max_tokens: 500,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`AI Gateway error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data.choices[0].message.content;
+}
+```
+
+### With Streaming
+
+```typescript
+// app/api/chat-stream/route.ts
+import { NextRequest } from 'next/server';
+
+export async function POST(req: NextRequest) {
+  const { message } = await req.json();
+
+  const response = await fetch(process.env.AI_GATEWAY_URL!, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${process.env.VERCEL_OIDC_TOKEN}`,
+    },
+    body: JSON.stringify({
+      model: 'anthropic/claude-sonnet-4-5',
+      messages: [{ role: 'user', content: message }],
+      max_tokens: 1000,
+      stream: true,
+    }),
+  });
+
+  // Return the stream directly
+  return new Response(response.body, {
+    headers: {
+      'Content-Type': 'text/event-stream',
+      'Cache-Control': 'no-cache',
+      'Connection': 'keep-alive',
+    },
+  });
+}
+```
+
+## Available Models
+
+### Anthropic Claude
+
+```typescript
+// Latest models
+'anthropic/claude-sonnet-4-5'
+'anthropic/claude-opus-4'
+
+// Previous versions
+'anthropic/claude-3-5-sonnet-20241022'
+'anthropic/claude-3-opus-20240229'
+```
+
+### OpenAI GPT
+
+```typescript
+// GPT-4 models
+'openai/gpt-4o'
+'openai/gpt-4o-mini'
+'openai/gpt-4-turbo'
+
+// GPT-3.5
+'openai/gpt-3.5-turbo'
+```
+
+### Google Gemini
+
+```typescript
+// Gemini 2.0
+'google/gemini-2.5-flash'
+'google/gemini-2.0-pro'
+
+// Gemini 1.5
+'google/gemini-1.5-pro'
+'google/gemini-1.5-flash'
+```
+
+## Error Handling
+
+```typescript
+async function callAI(prompt: string) {
+  try {
+    const response = await fetch(process.env.AI_GATEWAY_URL!, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.VERCEL_OIDC_TOKEN}`,
+      },
+      body: JSON.stringify({
+        model: 'anthropic/claude-sonnet-4-5',
+        messages: [{ role: 'user', content: prompt }],
+        max_tokens: 1000,
+      }),
+    });
+
+    if (!response.ok) {
+      // Handle specific error codes
+      switch (response.status) {
+        case 401:
+          throw new Error('Token expired. Run: vercel env pull');
+        case 429:
+          throw new Error('Rate limit exceeded. Please try again later.');
+        case 500:
+          throw new Error('Gateway error. Check Vercel Dashboard.');
+        default:
+          throw new Error(`Request failed: ${response.status}`);
+      }
+    }
+
+    const data = await response.json();
+
+    if (!data.choices?.[0]?.message?.content) {
+      throw new Error('Invalid response format from gateway');
+    }
+
+    return data.choices[0].message.content;
+  } catch (error) {
+    console.error('AI Gateway error:', error);
+    // Log to monitoring service
+    throw error;
+  }
+}
+```
+
+## Rate Limiting
+
+Implement client-side rate limiting:
+
+```typescript
+import { RateLimiter } from 'limiter';
+
+// 10 requests per minute
+const limiter = new RateLimiter({
+  tokensPerInterval: 10,
+  interval: 'minute'
+});
+
+async function rateLimitedAICall(prompt: string) {
+  await limiter.removeTokens(1);
+  return callAI(prompt);
+}
+```
+
+## Caching
+
+Cache common queries to reduce costs:
+
+```typescript
+const cache = new Map<string, { response: string; timestamp: number }>();
+const CACHE_TTL = 1000 * 60 * 60; // 1 hour
+
+async function cachedAICall(prompt: string) {
+  const cached = cache.get(prompt);
+
+  if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
+    return cached.response;
+  }
+
+  const response = await callAI(prompt);
+  cache.set(prompt, { response, timestamp: Date.now() });
+
+  return response;
+}
+```
+
+## Monitoring
+
+Track usage in your application:
+
+```typescript
+let requestCount = 0;
+let totalTokens = 0;
+
+async function monitoredAICall(prompt: string) {
+  const startTime = Date.now();
+
+  try {
+    const response = await fetch(process.env.AI_GATEWAY_URL!, {
+      // ... request config
+    });
+
+    const data = await response.json();
+
+    // Track metrics
+    requestCount++;
+    const tokens = data.usage?.total_tokens || 0;
+    totalTokens += tokens;
+
+    const latency = Date.now() - startTime;
+
+    console.log({
+      requestCount,
+      totalTokens,
+      latency,
+      model: 'anthropic/claude-sonnet-4-5',
+    });
+
+    return data.choices[0].message.content;
+  } catch (error) {
+    // Track errors
+    console.error('AI error:', error);
+    throw error;
+  }
+}
+```
+
+## Testing
+
+### Unit Tests
+
+```typescript
+import { describe, it, expect, vi } from 'vitest';
+
+describe('AI Gateway Integration', () => {
+  it('should call gateway with correct format', async () => {
+    const mockFetch = vi.fn(() =>
+      Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve({
+          choices: [{ message: { content: 'Test response' } }]
+        })
+      })
+    );
+    global.fetch = mockFetch;
+
+    await callAI('test prompt');
+
+    expect(mockFetch).toHaveBeenCalledWith(
+      process.env.AI_GATEWAY_URL,
+      expect.objectContaining({
+        method: 'POST',
+        headers: expect.objectContaining({
+          'Authorization': expect.stringContaining('Bearer'),
+        }),
+      })
+    );
+  });
+});
+```
+
+### Integration Tests
+
+```typescript
+// __tests__/ai-gateway.test.ts
+describe('AI Gateway Integration', () => {
+  it('should successfully call Claude via gateway', async () => {
+    const response = await callAI('What is 2+2?');
+    expect(response).toContain('4');
+  });
+
+  it('should handle rate limits gracefully', async () => {
+    // Make 11 rapid requests (limit is 10/min)
+    const promises = Array(11).fill(null).map(() =>
+      callAI('test')
+    );
+
+    await expect(Promise.all(promises)).rejects.toThrow('429');
+  });
+});
+```
+
+## Next Steps
+
+- [View complete architecture](/architecture/ai-gateway-byok)
+- [Check Vercel Dashboard](https://vercel.com/aicoderally/aicoderally-stack/ai-gateway)
+- [Test your integration](../../../test-gateway-final.mjs)
+
+## Support
+
+Questions? Contact todd@aicoderally.com or check [troubleshooting guide](/architecture/ai-gateway-byok#troubleshooting).
