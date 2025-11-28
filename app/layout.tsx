@@ -32,6 +32,7 @@ export default function RootLayout({
                 <a href="/getting-started" className="nav-link">Getting Started</a>
                 <a href="/tech-stack" className="nav-link">Tech Stack</a>
                 <a href="/modules" className="nav-link">Modules</a>
+                <a href="/integration/ai-gateway" className="nav-link">AI Gateway</a>
                 <a href="/deployment" className="nav-link">Deployment</a>
               </nav>
 
@@ -66,6 +67,7 @@ export default function RootLayout({
                 <h4 className="font-semibold text-sm text-gray-900 mb-3">Quick Links</h4>
                 <div className="flex flex-col gap-2 text-sm">
                   <a href="/" className="text-gray-600 hover:text-violet-600 transition-colors">Documentation</a>
+                  <a href="/integration/ai-gateway" className="text-gray-600 hover:text-violet-600 transition-colors">AI Gateway Guide</a>
                   <a href="https://aicoderally.com" className="text-gray-600 hover:text-violet-600 transition-colors">Main Website</a>
                   <a href="https://github.com/AICodeRally/aicoderally-stack" className="text-gray-600 hover:text-violet-600 transition-colors">GitHub</a>
                 </div>
