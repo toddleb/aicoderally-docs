@@ -1,0 +1,137 @@
+{
+  "Profiles": [
+    {
+      "Name": "Doc Agent - AICodeRally",
+      "Guid": "doc-agent-aicoderally",
+      "Badge Text": "📚 DOC",
+      "Custom Directory": "Yes",
+      "Working Directory": "/Users/todd.lebaron/dev/aicoderally-docs",
+      "Initial Text": "clear && echo '📚 Doc Agent - AICodeRally Documentation Keeper' && echo '' && claude",
+
+      "Ansi 0 Color": {
+        "Red Component": 0.2,
+        "Green Component": 0.25,
+        "Blue Component": 0.3
+      },
+      "Ansi 1 Color": {
+        "Red Component": 0.9,
+        "Green Component": 0.3,
+        "Blue Component": 0.3
+      },
+      "Ansi 2 Color": {
+        "Red Component": 0.3,
+        "Green Component": 0.8,
+        "Blue Component": 0.4
+      },
+      "Ansi 3 Color": {
+        "Red Component": 0.9,
+        "Green Component": 0.7,
+        "Blue Component": 0.3
+      },
+      "Ansi 4 Color": {
+        "Red Component": 0.3,
+        "Green Component": 0.6,
+        "Blue Component": 0.9
+      },
+      "Ansi 5 Color": {
+        "Red Component": 0.7,
+        "Green Component": 0.4,
+        "Blue Component": 0.9
+      },
+      "Ansi 6 Color": {
+        "Red Component": 0.3,
+        "Green Component": 0.8,
+        "Blue Component": 0.8
+      },
+      "Ansi 7 Color": {
+        "Red Component": 0.9,
+        "Green Component": 0.9,
+        "Blue Component": 0.9
+      },
+
+      "Background Color": {
+        "Red Component": 0.08,
+        "Green Component": 0.12,
+        "Blue Component": 0.18
+      },
+      "Foreground Color": {
+        "Red Component": 0.85,
+        "Green Component": 0.9,
+        "Blue Component": 0.95
+      },
+
+      "Cursor Color": {
+        "Red Component": 0.3,
+        "Green Component": 0.8,
+        "Blue Component": 0.8
+      },
+      "Cursor Text Color": {
+        "Red Component": 0.08,
+        "Green Component": 0.12,
+        "Blue Component": 0.18
+      },
+
+      "Selection Color": {
+        "Red Component": 0.2,
+        "Green Component": 0.4,
+        "Blue Component": 0.6
+      },
+
+      "Bold Color": {
+        "Red Component": 0.9,
+        "Green Component": 0.95,
+        "Blue Component": 1.0
+      },
+
+      "Link Color": {
+        "Red Component": 0.4,
+        "Green Component": 0.7,
+        "Blue Component": 0.9
+      },
+
+      "Tab Color": {
+        "Red Component": 0.1,
+        "Green Component": 0.3,
+        "Blue Component": 0.5
+      },
+
+      "Use Tab Color": true,
+      "Use Bold Font": true,
+      "Use Bright Bold": true,
+      "Use Italic Font": true,
+
+      "Transparency": 0.05,
+      "Blur": true,
+      "Blur Radius": 5,
+
+      "Window Style": "Normal",
+      "Screen": -1,
+      "Space": -1,
+
+      "Columns": 120,
+      "Rows": 40,
+
+      "Scrollback Lines": 10000,
+      "Unlimited Scrollback": false,
+
+      "Character Encoding": 4,
+
+      "Mouse Reporting": true,
+      "Terminal Type": "xterm-256color",
+
+      "Silence Bell": false,
+      "Visual Bell": true,
+
+      "Blink Allowed": true,
+      "Blinking Cursor": true,
+      "Cursor Type": 2,
+
+      "ASCII Anti Aliased": true,
+      "Non-ASCII Anti Aliased": true,
+
+      "Tags": ["documentation", "doc-agent", "aicoderally"],
+
+      "Description": "Custom iTerm2 profile for the Doc Agent - AICodeRally's documentation keeper. Features documentation-themed colors (blue/cyan tones), auto-launches in docs directory, and displays Doc badge."
+    }
+  ]
+}
