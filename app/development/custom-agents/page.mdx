@@ -1,0 +1,430 @@
+export const metadata = {
+  title: 'Custom Agents',
+  description: 'Specialized Claude Code agents for AICodeRally development - Dev, Stack, Docs, and Rally AI experts'
+}
+
+# Custom Agents
+
+**Last Updated:** November 28, 2025
+
+AICodeRally uses **custom Claude Code agents** to provide specialized expertise across different areas of the stack. Each agent has specific tools, knowledge, and responsibilities.
+
+---
+
+## Overview
+
+Custom agents are invoked via **slash commands** in Claude Code:
+
+```
+/aicr-dev      - Development expert (features, bugs, tests)
+/aicr-stack    - Infrastructure expert (Vercel, Prisma, GitHub)
+/aicr-docs     - Documentation expert (docs site, guides)
+/aicr-rally    - Rally AI expert (multi-AI orchestration)
+```
+
+Each agent has:
+- **Specialized knowledge** of their domain
+- **Full tool access** (Bash, Read, Write, Edit, Grep, Glob)
+- **Context awareness** of the entire codebase
+- **Focused responsibilities** to avoid scope creep
+
+---
+
+## The Four Agents
+
+### 1. Dev Agent (`/aicr-dev`)
+
+**Description:** Development expert for building features, debugging, testing, and maintaining the codebase across all apps
+
+**When to Use:**
+- Building new features (Studio apps, Edge solutions, modules)
+- Fixing bugs and debugging issues
+- Writing tests (unit, integration, e2e)
+- Refactoring code
+- Code reviews and quality checks
+- TypeScript type issues
+
+**Expertise:**
+- React 19 & Next.js 15.3.2
+- TypeScript strict mode
+- Tailwind CSS & Design System 2.0
+- Testing (Jest, Vitest, Playwright)
+- Architecture 3.0 compliance
+- Module contracts
+
+**Example Tasks:**
+```
+/aicr-dev Build a new Studio app for tracking student projects
+
+/aicr-dev Debug the authentication flow in npEdge
+
+/aicr-dev Write unit tests for the email module
+
+/aicr-dev Refactor the dashboard to use server components
+```
+
+**Responsibilities:**
+- Feature development across all tiers (Studio, Edge, Summit)
+- Bug fixes and debugging
+- Test writing and coverage
+- Code quality and refactoring
+- Performance optimization
+- TypeScript type safety
+
+**Constraints:**
+- No infrastructure changes (use `/aicr-stack`)
+- No documentation writing (use `/aicr-docs`)
+- No multi-AI orchestration (use `/aicr-rally`)
+
+---
+
+### 2. Stack Agent (`/aicr-stack`)
+
+**Description:** Infrastructure and deployment expert for Vercel, Prisma, GitHub, and deployment workflows
+
+**When to Use:**
+- Deploying apps to Vercel
+- Managing environment variables
+- Creating/running Prisma migrations
+- Setting up GitHub workflows
+- Troubleshooting deployment issues
+- Database schema changes
+- CI/CD pipeline configuration
+
+**Expertise:**
+- Vercel deployment & configuration
+- Prisma ORM & migrations
+- GitHub Actions & workflows
+- Environment variable management
+- Database optimization
+- Edge runtime vs Node.js
+- Build performance optimization
+
+**Example Tasks:**
+```
+/aicr-stack Deploy the Studio app to Vercel production
+
+/aicr-stack Create a migration to add multi-tenant support
+
+/aicr-stack Set up GitHub Actions for automated testing
+
+/aicr-stack Troubleshoot why the Edge deployment is failing
+
+/aicr-stack Optimize the Prisma schema for better performance
+```
+
+**Responsibilities:**
+- Vercel deployment management
+- Prisma schema design & migrations
+- GitHub workflow automation
+- Environment configuration
+- Database administration
+- Build optimization
+- Deployment troubleshooting
+
+**Constraints:**
+- No feature development (use `/aicr-dev`)
+- No documentation content (use `/aicr-docs`)
+- No AI orchestration design (use `/aicr-rally`)
+
+---
+
+### 3. Docs Agent (`/aicr-docs`)
+
+**Description:** Documentation expert for managing docs.aicoderally.com - the keeper of all documentation
+
+**When to Use:**
+- Creating new documentation pages
+- Updating existing guides
+- Organizing documentation structure
+- Syncing docs with code changes
+- Writing API references
+- Creating tutorials and examples
+- Maintaining documentation accuracy
+
+**Expertise:**
+- Next.js documentation site (Fumadocs)
+- MDX authoring
+- Technical writing
+- Documentation structure & organization
+- Code examples & snippets
+- API documentation
+- Content strategy
+
+**Example Tasks:**
+```
+/aicr-docs Update the Rally AI documentation with the new ALM architecture
+
+/aicr-docs Create a tutorial for building your first Studio app
+
+/aicr-docs Document the new module contract requirements
+
+/aicr-docs Reorganize the architecture documentation section
+
+/aicr-docs Add code examples to the testing guide
+```
+
+**Responsibilities:**
+- Documentation site maintenance
+- Content creation & updates
+- Structure & organization
+- Accuracy & synchronization
+- Examples & tutorials
+- API references
+- Developer guides
+
+**Constraints:**
+- No code implementation (use `/aicr-dev`)
+- No infrastructure changes (use `/aicr-stack`)
+- Documentation only (content, not features)
+
+---
+
+### 4. Rally Agent (`/aicr-rally`)
+
+**Description:** Rally AI expert for multi-AI orchestration, design phases, sprint planning, and validation workflows
+
+**When to Use:**
+- Designing new features with multi-AI collaboration
+- Creating sprint plans
+- Running validation workflows
+- Understanding Rally AI architecture
+- Troubleshooting orchestrator issues
+- Adding new ALM methods
+- Configuring AI providers
+
+**Expertise:**
+- Rally AI orchestrator architecture
+- Multi-AI coordination (Claude + GPT + Gemini)
+- Design phase workflows
+- Sprint planning automation
+- Validation pipelines
+- AI provider integration (Anthropic, OpenAI, Google)
+- Vercel AI Gateway configuration
+- RAG (Retrieval-Augmented Generation)
+
+**Example Tasks:**
+```
+/aicr-rally Explain the orchestrator design pattern
+
+/aicr-rally Help me configure GPT-4 for design phase workflows
+
+/aicr-rally Run a design phase for the new authentication module
+
+/aicr-rally Troubleshoot why Gemini validation is failing
+
+/aicr-rally Add a new ALM method for creating modules
+```
+
+**Responsibilities:**
+- Rally AI tool development
+- Multi-AI orchestration
+- Design & validation workflows
+- AI provider integration
+- Orchestrator architecture
+- CLI command development
+- RAG system integration
+
+**Constraints:**
+- Rally AI specific (not general dev work)
+- No website/app features (use `/aicr-dev`)
+- No deployment (use `/aicr-stack`)
+- No documentation writing (use `/aicr-docs`)
+
+---
+
+## How to Use Custom Agents
+
+### Basic Usage
+
+Simply type the slash command in Claude Code:
+
+```
+/aicr-dev Help me build a birthday planning app
+```
+
+The agent will:
+1. **Load specialized knowledge** for that domain
+2. **Use appropriate tools** (Bash, Read, Write, Edit, Grep, Glob)
+3. **Follow best practices** for that area
+4. **Stay focused** on their responsibilities
+
+### Combining Agents
+
+You can hand off between agents:
+
+```
+# 1. Use Dev agent to build a feature
+/aicr-dev Build a new payment module with Stripe integration
+
+# 2. Use Stack agent to deploy it
+/aicr-stack Deploy the payment module to Vercel and run migrations
+
+# 3. Use Docs agent to document it
+/aicr-docs Create documentation for the new payment module
+```
+
+### When to Use Which Agent
+
+**Building features?** → `/aicr-dev`
+**Deploying or database work?** → `/aicr-stack`
+**Writing docs?** → `/aicr-docs`
+**Rally AI work?** → `/aicr-rally`
+
+---
+
+## Agent Configuration
+
+Custom agents are defined in `.claude/agents/` with this structure:
+
+```yaml
+---
+name: aicr-dev
+description: Development agent for AICodeRally
+tools: Bash, Read, Write, Edit, Grep, Glob
+model: sonnet
+---
+
+# Agent system prompt...
+```
+
+**Key Fields:**
+- `name`: Agent identifier (lowercase with hyphens)
+- `description`: What the agent does (used for discovery)
+- `tools`: Comma-separated list of tools (NOT YAML array)
+- `model`: `sonnet`, `opus`, `haiku`, or `inherit`
+
+### Tools Available
+
+All four agents have access to:
+
+- **Bash** - Run terminal commands, git operations, builds
+- **Read** - Read files from the codebase
+- **Write** - Create new files
+- **Edit** - Modify existing files
+- **Grep** - Search code for patterns
+- **Glob** - Find files by pattern
+
+---
+
+## Agent Best Practices
+
+### For Users
+
+1. **Use the right agent** - Don't ask Dev agent to deploy
+2. **Be specific** - Give context and requirements
+3. **Hand off when needed** - Use multiple agents for complex tasks
+4. **Let agents focus** - Each agent is specialized for a reason
+
+### For Agent Developers
+
+1. **Keep scope focused** - Agents should have clear boundaries
+2. **Document responsibilities** - Make it clear what the agent does
+3. **Use comma-separated tools** - NOT YAML array format
+4. **Test agent behavior** - Ensure they stay in scope
+5. **Update documentation** - Keep this page current
+
+---
+
+## Troubleshooting
+
+### Agent shows "(Tools: )" with no tools
+
+**Problem:** Tools field is using YAML array format instead of comma-separated
+
+**Fix:** Change from:
+```yaml
+tools:
+  - Bash
+  - Read
+```
+
+To:
+```yaml
+tools: Bash, Read, Write, Edit, Grep, Glob
+```
+
+### Agent not appearing
+
+**Problem:** Agent file is not in the right location
+
+**Fix:** Ensure agent is in `.claude/agents/` at project root (not subdirectories)
+
+### Agent not staying in scope
+
+**Problem:** Agent prompt isn't clear about constraints
+
+**Fix:** Update agent `.md` file to clearly define:
+- Primary responsibilities
+- When to use
+- When NOT to use (constraints)
+
+---
+
+## Related Documentation
+
+- [Agent Protocol](/development/agent-protocol) - How agents collaborate
+- [Contributing Guide](/development/contributing) - Development workflow
+- [Rally AI](/tools/rally-ai) - Multi-AI orchestration tool
+- [Architecture 3.0](/architecture/unified) - System architecture
+
+---
+
+## Quick Reference
+
+| Agent | Command | Use For | Don't Use For |
+|-------|---------|---------|---------------|
+| **Dev** | `/aicr-dev` | Features, bugs, tests | Deployment, docs |
+| **Stack** | `/aicr-stack` | Vercel, Prisma, GitHub | Features, content |
+| **Docs** | `/aicr-docs` | Documentation, guides | Code, infrastructure |
+| **Rally** | `/aicr-rally` | Rally AI, orchestration | General dev work |
+
+---
+
+## Examples
+
+### Example 1: Building a New Feature
+
+```
+User: I want to add a dark mode toggle to the website
+
+# Step 1: Use Dev agent
+/aicr-dev Add dark mode toggle to the website with system preference detection
+
+# Step 2: Use Stack agent
+/aicr-stack Deploy the dark mode changes to Vercel
+
+# Step 3: Use Docs agent
+/aicr-docs Document the new dark mode feature in the user guide
+```
+
+### Example 2: Fixing a Production Issue
+
+```
+User: The database migration failed in production
+
+# Use Stack agent (infrastructure issue)
+/aicr-stack Investigate and fix the failed database migration in production
+```
+
+### Example 3: Creating Documentation
+
+```
+User: Need to document the new module contract
+
+# Use Docs agent (documentation task)
+/aicr-docs Create comprehensive documentation for the new module contract with code examples
+```
+
+### Example 4: Rally AI Development
+
+```
+User: Add a new ALM method for generating Edge solutions
+
+# Use Rally agent (Rally AI specific)
+/aicr-rally Add a new createEdgeSolution() method to the orchestrator with Operator AI
+```
+
+---
+
+**Need help?** Try `/aicr-dev`, `/aicr-stack`, `/aicr-docs`, or `/aicr-rally` depending on your task!
