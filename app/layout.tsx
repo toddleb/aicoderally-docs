@@ -71,6 +71,7 @@ export default function RootLayout({
                   <a href="/architecture/unified" className="text-gray-600 hover:text-violet-600 transition-colors">System Architecture</a>
                   <a href="/tools/rally-ai" className="text-gray-600 hover:text-violet-600 transition-colors">Rally AI</a>
                   <a href="/development/agent-protocol" className="text-gray-600 hover:text-violet-600 transition-colors">Agent Protocol</a>
+                  <a href="/development/prompt-library" className="text-gray-600 hover:text-violet-600 transition-colors">Prompt Library</a>
                   <a href="/design-system" className="text-gray-600 hover:text-violet-600 transition-colors">Design System</a>
                   <a href="/franchise" className="text-gray-600 hover:text-violet-600 transition-colors">Franchise</a>
                 </div>
@@ -79,6 +80,7 @@ export default function RootLayout({
                 <h4 className="font-semibold text-sm text-gray-900 mb-3">Resources</h4>
                 <div className="flex flex-col gap-2 text-sm">
                   <a href="/integration/ai-gateway" className="text-gray-600 hover:text-violet-600 transition-colors">AI Gateway Guide</a>
+                  <a href="/development/prompt-library" className="text-gray-600 hover:text-violet-600 transition-colors">Prompt Library</a>
                   <a href="https://github.com/AICodeRally/aicoderally-stack/blob/master/UNIFIED_ARCHITECTURE.md" className="text-gray-600 hover:text-violet-600 transition-colors">Master Architecture Doc</a>
                   <a href="https://aicoderally.com" className="text-gray-600 hover:text-violet-600 transition-colors">Main Website</a>
                   <a href="https://github.com/AICodeRally/aicoderally-stack" className="text-gray-600 hover:text-violet-600 transition-colors">GitHub</a>

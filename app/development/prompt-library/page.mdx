@@ -1,0 +1,519 @@
+export const metadata = {
+  title: 'Architecture-Aware Prompt Library',
+  description: 'Generate architecture-compliant prompts for AI agents to create apps, solutions, and modules that automatically follow Architecture 3.0 rules'
+}
+
+# Architecture-Aware Prompt Library
+
+**Generate prompts that teach AI agents Architecture 3.0 automatically**
+
+Create new Studio apps, Edge solutions, Summit solutions, and modules with AI agents (Claude Code, ChatGPT, etc.) that automatically follow all architectural constraints without re-explaining the rules every time.
+
+## The Problem
+
+When working with AI agents to create new components, you typically have to:
+
+1. Re-explain Architecture 3.0 rules every time
+2. Remind the agent about naming conventions (studio-, edge-, summit- prefixes)
+3. Specify file locations and registry requirements
+4. Enforce design system compliance (Tailwind, Inter, no emojis)
+5. Clarify tier boundaries (Studio ≠ Edge ≠ Summit)
+
+**This gets repetitive fast.**
+
+## The Solution
+
+AICodeRally provides **architecture-aware prompt generators** that create complete, constrained prompts for AI agents. Run a CLI script, answer a few questions, copy the generated prompt, paste into your AI agent, and get architecturally-compliant code.
+
+## Quick Start
+
+```bash
+# In the aicoderally-stack repository
+
+# Generate Studio app prompt (3-step loop: Ideate → Create → Validate)
+./bin/aicr-new-studio-app.sh
+
+# Generate Edge solution prompt (6 P's framework)
+./bin/aicr-new-edge-solution.sh
+
+# Generate Summit solution prompt (∞ enterprise extensions)
+./bin/aicr-new-summit-solution.sh
+
+# Generate module prompt (shared capability)
+./bin/aicr-new-module.sh
+```
+
+## How It Works
+
+### Step 1: Run the CLI Helper
+
+```bash
+./bin/aicr-new-studio-app.sh
+```
+
+The script prompts you for required information:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  AICodeRally – New Studio App Prompt Generator
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Studio app id (without 'studio-'): event-planner
+Slug (URL segment): event-planner
+Name: Event Planner
+Short description: Plan and organize nonprofit events
+Domain (nonprofit|creative-services|...): nonprofit
+Primary modules (comma-separated ids): event-management, calendar
+```
+
+### Step 2: Copy the Generated Prompt
+
+The script outputs a complete, architecture-aware prompt:
+
+```text
+TYPE: studio-app
+GOAL: Create a new Ideation Studio app under AICodeRally Architecture 3.0.
+
+Constraints:
+- Studio = 3 steps: Ideate → Create → Validate.
+- Studio apps live in: apps/studio/app/apps/*
+- ID must start with: studio-
+- Route is: /apps/[slug]
+- Use Tailwind, Inter, Radix icons, no emojis
+
+App Spec:
+- id: studio-event-planner
+- slug: event-planner
+- name: "Event Planner"
+- description: "Plan and organize nonprofit events"
+- domain: "nonprofit"
+- primaryModules: ["event-management", "calendar"]
+
+Tasks:
+1. Create page at apps/studio/app/apps/event-planner/page.tsx
+2. Register in apps/studio/lib/apps.ts as StudioAppMeta
+3. Implement 3-step UI (Ideate, Create, Validate)
+4. Leave TODO comments for business logic
+```
+
+### Step 3: Paste Into Your AI Agent
+
+Copy the entire prompt and paste it into Claude Code, ChatGPT, or your preferred AI agent.
+
+### Step 4: AI Agent Creates the Component
+
+The AI agent follows the prompt exactly, creating:
+- ✅ Correct file structure
+- ✅ Proper naming (studio-event-planner)
+- ✅ Registry registration
+- ✅ Design system compliance
+- ✅ 3-step workflow UI
+- ✅ TODO comments for business logic
+
+## Available Prompt Generators
+
+### 1. Studio App Generator
+
+**Command:** `./bin/aicr-new-studio-app.sh`
+
+**Use When:** Creating a new app in Ideation Studio (one idea → one app)
+
+**Framework:** 3-Step Loop
+- **Ideate** - Clarify the problem, audience, use case
+- **Create** - Generate the app: UI/UX, flows, interactions
+- **Validate** - Test with users, gather feedback, refine
+
+**What It Prompts For:**
+- App id (without 'studio-' prefix)
+- Slug (URL segment)
+- Name (user-facing display name)
+- Short description
+- Domain (nonprofit, creative-services, food-service, etc.)
+- Primary modules (comma-separated module ids)
+
+**What AI Agents Create:**
+- Page file: `apps/studio/app/apps/[slug]/page.tsx`
+- Registry entry in `apps/studio/lib/apps.ts`
+- 3-step UI implementation
+- TODO comments for business logic
+
+### 2. Edge Solution Generator
+
+**Command:** `./bin/aicr-new-edge-solution.sh`
+
+**Use When:** Creating a new vertical solution in Edge (like npEdge, Designer Biz Kit)
+
+**Framework:** 6 P's
+- **P1 — People:** Roles, permissions, stakeholders
+- **P2 — Process:** Operational workflows, task flows
+- **P3 — Products:** What the organization delivers
+- **P4 — Performance:** KPIs, dashboards, analytics
+- **P5 — Pipeline:** Lead management, client lifecycle
+- **P6 — Platform:** Tools, automations, integrations
+
+**What It Prompts For:**
+- Solution id (without 'edge-' prefix)
+- Label (human-readable name)
+- Domain
+- Summary (1-2 lines)
+- ICP (ideal customer profile)
+- Module ids (comma-separated)
+
+**What AI Agents Create:**
+- Solution definition: `packages/solutions-edge/src/[slug].ts`
+- Registry entries in `packages/solutions-edge/src/index.ts` and `apps/edge/lib/solutions.ts`
+- Workflows mapped to 6 P's
+- Solution detail pages
+
+### 3. Summit Solution Generator
+
+**Command:** `./bin/aicr-new-summit-solution.sh`
+
+**Use When:** Creating enterprise-level solutions that orchestrate multiple Edge solutions
+
+**Framework:** ∞ (Infinity)
+- 6 P's + **Governance, Scale, Integration, Intelligence, Strategy, Change**
+
+**What It Prompts For:**
+- Domain (e.g., spm, nonprofit)
+- Suite slug (e.g., governance, impact-suite)
+- Label
+- Summary (1-2 lines)
+- ICP description
+- Module ids (comma-separated)
+- Edge solution ids (comma-separated, optional)
+
+**What AI Agents Create:**
+- Solution file: `packages/solutions-summit/src/[domain]-[suite].ts`
+- Registry entries in `packages/solutions-summit/src/index.ts` and `apps/summit/lib/solutions.ts`
+- Executive context and governance workflows
+- Relationships to Edge solutions and modules
+
+### 4. Module Generator
+
+**Command:** `./bin/aicr-new-module.sh`
+
+**Use When:** Creating a new shared capability that can be used across all tiers
+
+**What It Prompts For:**
+- Module id (kebab-case, **no tier prefix**)
+- Name
+- Description
+- Domain (nonprofit, creative-services, food-service, etc.)
+- Category (crm, ops, finance, analytics, workflow, experience)
+
+**What AI Agents Create:**
+- Module definition: `packages/modules/[module-id]/index.ts`
+- Registry entries in `packages/modules/src/index.ts`
+- RallyModule export with proper metadata
+
+**Important:** Modules are internal capabilities, not user-facing apps. They should **not** include tier prefixes (no studio-/edge-/summit-).
+
+## Benefits
+
+### For Developers
+
+✅ **No Re-teaching** - Architecture 3.0 rules embedded in every prompt
+✅ **Consistent Naming** - studio-, edge-, summit- prefixes enforced automatically
+✅ **Correct File Locations** - Proper directory structure guaranteed
+✅ **Design System Compliance** - Tailwind, Inter, Radix icons, no emojis
+✅ **Tier Boundaries** - Studio ≠ Edge ≠ Summit properly enforced
+✅ **Registry Updates** - Automatic registration in correct files
+✅ **Time Savings** - 30 seconds vs. 5 minutes explaining architecture
+
+### For AI Agents
+
+When an AI agent receives a generated prompt, it knows:
+
+1. **Exact constraints** - Non-negotiable architectural rules
+2. **Exact file paths** - No improvising locations
+3. **Naming conventions** - Precise ID patterns to follow
+4. **Registry requirements** - Which files need updates
+5. **Design system** - Visual and component standards
+6. **Business logic boundaries** - Where to leave TODOs
+
+## Prompt Templates
+
+All prompt templates are stored in the stack repository:
+
+**Location:** `knowledge/prompt-library/aicr-creation-templates.md`
+
+This document contains the canonical prompt templates for:
+- Studio apps (3-step loop)
+- Edge solutions (6 P's)
+- Summit solutions (∞)
+- Modules (shared capabilities)
+
+AI agents receive these templates via the CLI-generated prompts and follow them exactly.
+
+## Example Workflows
+
+### Creating a New Studio App
+
+**Scenario:** You want to create a "Donor Thank You" app in Studio for nonprofits.
+
+```bash
+# Step 1: Run the generator
+./bin/aicr-new-studio-app.sh
+
+# Answer the prompts:
+# id: donor-thank-you
+# slug: donor-thank-you
+# name: Donor Thank You
+# description: Generate personalized thank you messages for donors
+# domain: nonprofit
+# modules: donor-management, templates
+
+# Step 2: Copy the generated prompt
+
+# Step 3: Paste into Claude Code
+# (Paste the complete prompt)
+
+# Step 4: Claude creates:
+# - apps/studio/app/apps/donor-thank-you/page.tsx
+# - Registry entry in apps/studio/lib/apps.ts
+# - 3-step UI (Ideate → Create → Validate)
+# - TODO comments for business logic
+```
+
+**Result:** Fully scaffolded Studio app following Architecture 3.0, ready for business logic implementation.
+
+### Creating a New Edge Solution
+
+**Scenario:** You want to create "RestaurantEdge" for food service businesses.
+
+```bash
+# Step 1: Run the generator
+./bin/aicr-new-edge-solution.sh
+
+# Answer the prompts:
+# id: restaurant-edge
+# label: RestaurantEdge - Food Service OS
+# domain: food-service
+# summary: Complete operating system for restaurants and food service businesses
+# ICP: Independent restaurants, ghost kitchens, catering companies
+# modules: inventory, staff-scheduling, pos-integration, menu-management
+
+# Step 2: Copy the generated prompt
+
+# Step 3: Paste into Claude Code
+
+# Step 4: Claude creates:
+# - packages/solutions-edge/src/restaurant-edge.ts
+# - Registry entries
+# - Workflows mapped to 6 P's
+# - Solution detail pages
+```
+
+**Result:** Complete Edge solution with 6 P's framework, ready for workflow implementation.
+
+### Creating a New Module
+
+**Scenario:** You need a reusable "Email Templates" module.
+
+```bash
+# Step 1: Run the generator
+./bin/aicr-new-module.sh
+
+# Answer the prompts:
+# id: email-templates (NO prefix!)
+# name: Email Templates
+# description: Reusable email template engine with variable substitution
+# domain: generic
+# category: workflow
+
+# Step 2: Copy the generated prompt
+
+# Step 3: Paste into Claude Code
+
+# Step 4: Claude creates:
+# - packages/modules/email-templates/index.ts
+# - Registry entries in packages/modules/src/index.ts
+# - RallyModule export
+```
+
+**Result:** Shared module usable across Studio, Edge, and Summit.
+
+## AI Agent Guidelines
+
+When you receive a prompt from these generators:
+
+### 1. Follow Constraints Exactly
+
+Constraints are **non-negotiable architectural rules**. Do not:
+- Change naming patterns
+- Modify file locations
+- Skip registry updates
+- Add emojis to UI
+- Create new architecture layers
+
+### 2. Use Exact File Paths
+
+The prompts specify exact file paths. Use them:
+
+```typescript
+// ✅ CORRECT
+apps/studio/app/apps/event-planner/page.tsx
+
+// ❌ WRONG
+apps/studio/pages/event-planner.tsx
+apps/studio/apps/event-planner.tsx
+```
+
+### 3. Follow Naming Conventions
+
+IDs must match specified patterns:
+
+```typescript
+// Studio apps
+"studio-event-planner"  // ✅ Correct
+"event-planner"         // ❌ Missing prefix
+"studio_event_planner"  // ❌ Wrong separator
+
+// Edge solutions
+"edge-restaurant-os"    // ✅ Correct
+"restaurant-os"         // ❌ Missing prefix
+
+// Modules
+"email-templates"       // ✅ Correct (no prefix!)
+"module-email"          // ❌ No tier prefix for modules
+"studio-email"          // ❌ Modules have no tier
+```
+
+### 4. Register in Specified Registries
+
+Don't skip registration steps:
+
+```typescript
+// apps/studio/lib/apps.ts
+export const STUDIO_APPS: StudioAppMeta[] = [
+  // ... existing apps
+  {
+    id: 'studio-event-planner',
+    slug: 'event-planner',
+    name: 'Event Planner',
+    // ... rest of metadata
+  }
+];
+```
+
+### 5. Use the Design System
+
+- **Tailwind CSS** for styling
+- **Inter font** for typography
+- **Radix icons** for iconography
+- **No emojis** in UI (unless explicitly requested)
+
+### 6. Leave TODOs for Business Logic
+
+Don't implement complex business logic without specification:
+
+```typescript
+// ✅ GOOD
+async function submitEvent(data: EventData) {
+  // TODO: Validate event data
+  // TODO: Save to database
+  // TODO: Send confirmation email
+  console.log('Event submitted:', data);
+}
+
+// ❌ BAD (implementing without specification)
+async function submitEvent(data: EventData) {
+  const validated = validateEventWithComplexRules(data);
+  await db.events.create(validated);
+  await sendEmail(data.email, 'confirmation', validated);
+  await notifySlack(validated);
+}
+```
+
+## Architecture References
+
+When working with generated prompts, refer to these resources for context:
+
+- **[UNIFIED_ARCHITECTURE.md](https://github.com/AICodeRally/aicoderally-stack/blob/master/UNIFIED_ARCHITECTURE.md)** - Master architecture specification (single source of truth)
+- **[System Architecture](/architecture/unified)** - Complete ecosystem overview
+- **[Franchise System](/franchise)** - 3-6-∞ Framework details
+- **[Design System](/design-system)** - UX/UI standards
+- **[Contributing Guide](/development/contributing)** - Development workflow
+
+## Related Tools
+
+### Documentation Validation
+
+After creating new components, validate documentation consistency:
+
+```bash
+node tools/validate-docs.mjs
+```
+
+This ensures:
+- All references to UNIFIED_ARCHITECTURE.md are correct
+- Documentation is synced with implementation
+- No broken cross-references
+
+### Pre-commit Hooks
+
+The stack repository includes pre-commit hooks that automatically:
+- Lint and format code
+- Validate module structure
+- Run type checks
+- Validate documentation consistency
+
+All generated code passes these checks automatically.
+
+## Future Enhancements
+
+Planned CLI helpers for additional workflows:
+
+- `bin/aicr-new-showcase-entry.sh` - Add entries to the Studio Showcase
+- `bin/aicr-new-studio-to-edge-link.sh` - Create mappings between Studio apps and Edge solutions
+- `bin/aicr-new-workflow.sh` - Generate workflow definitions for solutions
+
+## Troubleshooting
+
+### "Script not found" error
+
+Make sure you're in the `aicoderally-stack` repository root:
+
+```bash
+cd /path/to/aicoderally-stack
+./bin/aicr-new-studio-app.sh
+```
+
+### "Permission denied" error
+
+Scripts should be executable. If not:
+
+```bash
+chmod +x bin/aicr-new-*.sh
+```
+
+### AI agent doesn't follow constraints
+
+If an AI agent creates code that doesn't follow the constraints:
+
+1. **Check the prompt** - Ensure you copied the complete prompt
+2. **Re-paste the prompt** - Try again with explicit instruction to follow constraints
+3. **Reference UNIFIED_ARCHITECTURE.md** - Add a note to check the master doc
+4. **Use a different agent** - Some agents follow instructions better than others
+
+### Generated code doesn't pass validation
+
+Run the validation script to identify issues:
+
+```bash
+node tools/validate-docs.mjs
+pnpm aicr:validate  # Module validation
+```
+
+Fix any reported issues before committing.
+
+## Support
+
+- **Documentation Issues:** [aicoderally-docs/issues](https://github.com/AICodeRally/aicoderally-docs/issues)
+- **Stack Issues:** [aicoderally-stack/issues](https://github.com/AICodeRally/aicoderally-stack/issues)
+- **Contact:** todd@aicoderally.com
+
+---
+
+**Last Updated:** November 28, 2025
