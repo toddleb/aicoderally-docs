@@ -1,5 +1,5 @@
 ---
-name: doc
+name: aicr-docs
 description: Documentation agent for managing AICodeRally documentation - acts as the keeper of all docs, manages website and client app documentation, serves as master documentation and repository expert
 tools:
   - Bash

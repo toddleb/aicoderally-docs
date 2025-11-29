@@ -1,6 +1,6 @@
 ---
-description: Invoke the Doc agent - the documentation keeper for AICodeRally
-agent: doc
+description: Invoke the Docs agent - the documentation keeper for AICodeRally
+agent: aicr-docs
 argument-hint: [task or question about documentation]
 ---
 
