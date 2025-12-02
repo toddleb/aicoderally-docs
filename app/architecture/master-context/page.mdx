@@ -17,394 +17,171 @@ This is the **single source of truth** for how AICodeRally is structured and whe
 
 When you want to create a **new Studio, Edge, or Summit project**, you will:
 
-1. Work in the **`aicoderally` monorepo**.
-2. Create:
-   - an **app** under `apps/`
-   - a **vertical package** under `packages/verticals/`
-   - a **knowledge folder** under `knowledge/`
-   - an **AI config** under `.ai/projects/`
-3. Treat old scattered repos/folders as **legacy prototypes only**.
-
-Jump to:
-
-- [1. Tiers: Studio vs Edge vs Summit](#1-tiers-studio-vs-edge-vs-summit)
-- [2. Repo Structure (Mental Map)](#2-repo-structure-mental-map)
-- [3. Creating a New Studio Project](#3-creating-a-new-studio-project)
-- [4. Creating a New Edge Project](#4-creating-a-new-edge-project)
-- [5. Creating a New Summit Project](#5-creating-a-new-summit-project)
-- [6. AI, .ai Folder, and RAG](#6-ai-ai-folder-and-rag)
-- [7. Domains & Deployment Conventions](#7-domains--deployment-conventions)
-- [8. Legacy Repos & Prototypes](#8-legacy-repos--prototypes)
-- [9. Where to Look First](#9-where-to-look-first)
+1. Work in the **`aicoderally-stack` monorepo**.
+2. Add a **project folder** under `projects/` (not a new app repo).
+3. Let the tier shell render it:
+   - Studio → `apps/studio`
+   - Edge → `apps/edge`
+   - Summit → `apps/summit`
+4. Configure modules/solutions and copy/branding inside that project folder.
+5. Keep shared logic in `packages/*` and shared knowledge in `knowledge/*`.
 
 ---
 
 ## 1. Tiers: Studio vs Edge vs Summit
 
-### Studio – Front Door / Builders & Creators
-
-- **Who**: kids, individuals, clubs, small businesses, incubators.
-- **What**: creative build experiences, workshops, labs, "learn + build" flows.
-- **Where**: branded Studio portals (physical or virtual).
-- **Examples**:
-  - Kids code lab
-  - Startup pre-accelerator Studio
-  - Community "learn AI by building" nights
-
-**Rule of thumb**: If it feels like **experiences, programs, workshops, cohorts**, it is **Studio**.
+- **Studio** – experiences, programs, workshops, cohorts.
+- **Edge** – run-the-business portals (front/back office, product ops).
+- **Summit** – governance/control tower across studios/edges.
 
 ---
 
-### Edge – Operating System for a Business / Org
+## 2. Repo Structure (Real Mental Map)
 
-- **Who**: SMBs, non-profits, consulting firms, dev shops, etc.
-- **What**: front office, back office, product/AI operations in one portal.
-- **Where**: vertical "Edge" portals based on your 6P (People, Process, Products/Programs, Performance, Pipeline, Platform).
-
-**Examples**:
-- `npEdge` for nonprofits
-- `bhgEdge` for BHG consulting
-- `devEdge` for dev companies like you
-- `airc` for AICodeRally internal operations
-
-**Rule of thumb**: If it is **"run my business"** and spans functions, it is **Edge**.
-
----
-
-### Summit – Governance, Strategy, Control Tower
-
-- **Who**: execs, practice leads, investors, franchisors.
-- **What**: governance, multi-entity control, AI guardrails, roll-up dashboards.
-- **Where**: high-level Summit portals.
-
-**Examples**:
-- SPM Observatory
-- AICodeRally Franchise Summit
-- AI Governance / Risk Summit
-
-**Rule of thumb**: If it is **"see across many studios/edges, govern them, set rules"**, it is **Summit**.
-
----
-
-## 2. Repo Structure (Mental Map)
-
-All of this lives in the main **`aicoderally`** monorepo:
+The stack uses **multi-tenant tier apps** plus **project folders** and **shared packages**.
 
 ```text
-aicoderally/
+aicoderally-stack/
   apps/
-    studio-template/
-    edge-template/
-    summit-template/
-
-    studio-<slug>-portal/
-    edge-<slug>-portal/
-    summit-<slug>-portal/
+    website/        # Main platform & admin
+    studio/         # Studio tier shell (all Studio projects)
+    edge/           # Edge tier shell (all Edge projects)
+    summit/         # Summit tier shell (all Summit projects)
+    docs/           # Documentation site
+    mobile/         # Mobile app
 
   packages/
-    verticals/
-      studio/
-        _template/
-        <slug>/          # e.g. kids-code-lab, codegalaxy
-      edge/
-        _template/
-        np-edge/
-        bhg-edge/
-        dev-edge/
-        <slug>/          # e.g. airc, towedge
-      summit/
-        _template/
-        <slug>/          # e.g. spm-observatory
+    core/           # Core AI + orchestration
+    db/             # Prisma + DB
+    ui/             # Shared UI components
+    modules/        # 70+ reusable feature modules
+    connectors/     # Email, DB, AI connectors
+    solutions/      # Pre-built solution bundles / verticals
+
+  projects/
+    birthday-app-studio/  # Studio pilot
+    tacofinder-edge/      # Edge pilot
+    ...                   # New Studio/Edge/Summit projects live here
 
   knowledge/
-    studio/<slug>/
-    edge/<slug>/
-    summit/<slug>/
+    ai/
+    architecture/
+    methodology/
+    operations/
+    prompt-library/
+    tasks/
+    ...                   # 20+ categories, shared across stack
 
   .ai/
-    SYSTEM.md            # global AI notes (optional)
-    projects/
-      studio-<slug>.md
-      edge-<slug>.md
-      summit-<slug>.md
+    cross-commss/  # agent wiring (SYSTEM/tasks/cross-comms)
+    tasks/
+    ...            # can extend with .ai/projects for per-project briefs
+
+  prisma/
+    schema.prisma
+    migrations/
+
+  tools/
+    agents/        # iTerm2 agent profiles + scripts
+    python/
+    rally-ai/
+    rally-rag/
+    terminal-bridge/
+    scripts/       # includes create-studio-project.sh
+
+  docs/, roadmap/, scripts/, archive/, etc.
 ```
 
-If a project is not in that tree, it is legacy.
+Principle: `apps/` = shells; `packages/` = engine; `projects/` = instances; `knowledge/` = shared KB; `.ai/` = AI orchestration.
 
 ---
 
-## 3. Creating a New Studio Project
+## 3. Creating New Studio / Edge / Summit Projects
 
-Example: new Studio concept CodeGalaxy, slug = `codegalaxy`.
+In this stack, a **project** is a folder under `projects/` that is rendered by one of the tier apps.
 
-### 3.1 App
+- Studio → `projects/<slug>-studio/` used by `apps/studio`
+- Edge → `projects/<slug>-edge/` used by `apps/edge`
+- Summit → `projects/<slug>-summit/` used by `apps/summit`
+
+The heavy lifting lives in `apps/*` and `packages/*`. Project folders are mostly **config + glue**, not standalone apps.
+
+### 3.1 New Studio Project (scaffolder)
 
 ```bash
-cd aicoderally
-cp -R apps/studio-template apps/studio-codegalaxy-portal
+cd aicoderally-stack
+./tools/scripts/create-studio-project.sh
 ```
 
-Then inside `apps/studio-codegalaxy-portal`:
-- Update `package.json` "name" (e.g. `"@aicoderally/studio-codegalaxy-portal"`).
-- Update app title/branding (layout, theme, logos).
-- Wire env vars for this instance.
+The script asks for slug/name, creates `projects/<slug>-studio/`, and seeds config for `apps/studio` (project id/slug, modules to enable, copy/branding overrides).
 
-Naming convention: `apps/studio-<slug>-portal`
+Result: `projects/<slug>-studio/` + `apps/studio` shell + `packages/*` features.
 
----
+### 3.2 New Edge Project (template for now)
 
-### 3.2 Studio Vertical Package
+Copy the Edge pilot:
 
 ```bash
-cp -R packages/verticals/studio/_template \
-      packages/verticals/studio/codegalaxy
+cd aicoderally-stack
+cp -R projects/tacofinder-edge projects/<slug>-edge
 ```
 
-In `packages/verticals/studio/codegalaxy` you keep:
-- Studio-specific flows
-- Components and prompts unique to this Studio
-- Any Studio-only business logic
+Update slug/name/config; ensure `apps/edge` imports the new project registry/entry.
 
-The app is mainly shell + routing. The vertical package is the brain.
+Result: `projects/<slug>-edge/` + `apps/edge` shell + `packages/*` engine.
 
----
+Future: add `tools/scripts/create-edge-project.sh`.
 
-### 3.3 Knowledge
+### 3.3 New Summit Project
+
+Same pattern:
 
 ```bash
-mkdir -p knowledge/studio/codegalaxy
+cd aicoderally-stack
+cp -R projects/tacofinder-edge projects/<slug>-summit
 ```
 
-Suggested files:
-- `PROJECT_OVERVIEW.md`
-- `PROGRAMS_AND_OFFERS.md`
-- `OPS_CHECKLIST.md`
-- `LOCAL_MARKETS.md` (if relevant)
+Adjust for Summit semantics (governance, cross-project views) and wire into `apps/summit`.
+
+Future: add `tools/scripts/create-summit-project.sh`.
+
+### 3.4 Project Index
+
+Keep `knowledge/technical/PROJECT_INDEX.md` updated with Tier, Name, Slug, `projects/` path, tier app, status.
 
 ---
 
-### 3.4 AI Config
+## 4. AI, .ai Folder, and RAG
 
-```bash
-mkdir -p .ai/projects
-touch .ai/projects/studio-codegalaxy.md
-```
-
-This file captures for Rally AI / Claude / GPT:
-- What this Studio is (who, what, where).
-- Which app it uses: `apps/studio-codegalaxy-portal`.
-- Where its RAG data is: `knowledge/studio/codegalaxy/**`.
-- Which agents/prompts are primary.
+- `.ai/` holds SYSTEM, tasks, cross-comms.
+- If adding `.ai/projects/`, mirror `projects/<slug>-tier/` and link RAG sources.
+- RAG sources are shared under `knowledge/` (no per-tier folders).
 
 ---
 
-## 4. Creating a New Edge Project
+## 5. Domains & Deployment Conventions
 
-Example: AIRC Edge, slug = `airc`.
+Baseline subdomains (multi-tenant):
+- Studio: `studio.aicoderally.com`
+- Edge: `edge.aicoderally.com`
+- Summit: `summit.aicoderally.com`
 
-### 4.1 App
-
-```bash
-cd aicoderally
-cp -R apps/edge-template apps/edge-airc-portal
-```
-
-Inside `apps/edge-airc-portal`:
-- App name and branding.
-- Enable standard Edge modules (6P, front office, back office, product).
-
-Naming convention: `apps/edge-<slug>-portal`
+Document actual mappings in `knowledge/technical/DOMAINS_AND_APPS.md`.
 
 ---
 
-### 4.2 Edge Vertical Package
+## 6. Legacy Repos & Prototypes
 
-```bash
-cp -R packages/verticals/edge/_template \
-      packages/verticals/edge/airc
-```
-
-`packages/verticals/edge/airc` holds:
-- AIRC-specific entities (clients, engagements, projects).
-- Edge flows (front office, back office, product).
-- Any integrations (billing, CRM, etc.).
+Treat old repos/folders as reference only. If reviving something, migrate into:
+- `apps/studio|edge|summit` (shell)
+- `projects/<slug>-tier/` (instance)
+- `knowledge/` for docs
+- optional `.ai/projects/` brief for agents
 
 ---
 
-### 4.3 Knowledge
+## 7. Where to Look First
 
-```bash
-mkdir -p knowledge/edge/airc
-```
+1) This page / master doc. 2) `apps/` shells. 3) `projects/` roster. 4) `packages/` engine. 5) `knowledge/` for context. 6) `.ai/` for agent wiring.
 
-Suggested files:
-- `EDGE_AIRC_OVERVIEW.md`
-- `FRONT_OFFICE.md`
-- `BACK_OFFICE.md`
-- `PRODUCT_LAYER.md`
-- `AI_USE_CASES.md`
-
----
-
-### 4.4 AI Config
-
-```bash
-touch .ai/projects/edge-airc.md
-```
-
-Capture:
-- Project description.
-- Links to knowledge paths (`knowledge/edge/airc/**`).
-- Which agents to use (Creator/Operator/Enterprise).
-- Any special guardrails.
-
----
-
-## 5. Creating a New Summit Project
-
-Example: SPM Observatory, slug = `spm-observatory`.
-
-### 5.1 App
-
-```bash
-cd aicoderally
-cp -R apps/summit-template apps/summit-spm-observatory-portal
-```
-
-This app is the control tower:
-- Roll-up dashboards
-- Governance panels
-- Cross-Studio/Edge views
-
-Naming convention: `apps/summit-<slug>-portal`
-
----
-
-### 5.2 Summit Vertical Package
-
-```bash
-cp -R packages/verticals/summit/_template \
-      packages/verticals/summit/spm-observatory
-```
-
-Summit vertical includes:
-- Governance models
-- Multi-tenant and multi-entity logic
-- Role/permission structures
-- Observability metrics
-
----
-
-### 5.3 Knowledge
-
-```bash
-mkdir -p knowledge/summit/spm-observatory
-```
-
-Suggested files:
-- `GOVERNANCE_MODEL.md`
-- `ROLES_ACCESS_MODEL.md`
-- `AI_GUARDRAILS.md`
-- `METRICS_AND_THRESHOLDS.md`
-
----
-
-### 5.4 AI Config
-
-```bash
-touch .ai/projects/summit-spm-observatory.md
-```
-
-Capture:
-- What this Summit governs.
-- Which Studios/Edges roll up to it.
-- What RAG sources matter (`knowledge/summit/spm-observatory/**` + any child Edge/Studio knowledge).
-- Guardrails and escalation flows.
-
----
-
-## 6. AI, .ai Folder, and RAG
-
-The `.ai` folder is the brain wiring, not product code.
-
-Typical structure:
-
-```text
-.ai/
-  SYSTEM.md                # Master notes for Rally AI + agents
-  projects/
-    studio-<slug>.md
-    edge-<slug>.md
-    summit-<slug>.md
-  cross-comms/             # optional: specs for how agents talk
-  prompts/                 # optional: shared prompt libraries
-```
-
-Key rules:
-- Every Studio/Edge/Summit project gets one project file under `.ai/projects/`.
-- That file links:
-  - app path (`apps/...-portal`)
-  - vertical package path (`packages/verticals/.../<slug>/`)
-  - RAG folders (`knowledge/...`)
-  - special instructions for Claude/Codex/GPT
-
-RAG sources always live under `knowledge/`:
-- Studio knowledge -> `knowledge/studio/<slug>/`
-- Edge knowledge -> `knowledge/edge/<slug>/`
-- Summit knowledge -> `knowledge/summit/<slug>/`
-
----
-
-## 7. Domains & Deployment Conventions
-
-(Use this as a baseline; you can refine later.)
-
-Subdomain pattern:
-- Studio: `studio-<slug>.aicoderally.com` or `<slug>.studio.aicoderally.com`
-- Edge: `<slug>.edge.aicoderally.com`
-- Summit: `<slug>.summit.aicoderally.com`
-
-Mapping rule:
-- `apps/studio-<slug>-portal` -> Studio domain
-- `apps/edge-<slug>-portal` -> Edge domain
-- `apps/summit-<slug>-portal` -> Summit domain
-
-Document actual mappings in: `knowledge/technical/DOMAINS_AND_APPS.md`
-
----
-
-## 8. Legacy Repos & Prototypes
-
-You have various older repos and folders (early portals, experiments, one-off demos).
-
-Global rule:
-- Do not add new work to legacy repos.
-- Use them as design and architecture reference or code snippets for migration.
-
-When you want to resurrect something:
-1. Identify what is still valuable (flows, UI, copy, logic).
-2. Re-home it into:
-   - the right app (`apps/...-portal`)
-   - a vertical package (`packages/verticals/.../<slug>/`)
-   - the appropriate knowledge folder
-   - an `.ai/projects/...` file
-
-Once migrated, the new monorepo version becomes the canonical one.
-
----
-
-## 9. Where to Look First
-
-When you are lost or coming back cold after a week:
-1. Read this file: `AICodeRally_Master_Context.md`
-2. Check:
-   - `apps/` to see active portals
-   - `packages/verticals/` for domain brains
-   - `knowledge/` to remind yourself of project intent
-   - `.ai/projects/` to see what Rally AI thinks each thing is
-
-If something important is not hanging off this structure, fix the structure — do not start a new island.
-
----
-
-If you want, next pass I can write the `.ai/SYSTEM.md` that summarizes this same thing in "talking to Claude/GPT" format so your agents all inherit the same map.
+Short answer: **Keep the current multi-tenant tier apps + projects model; the old per-project app/verticals model is deprecated.**
