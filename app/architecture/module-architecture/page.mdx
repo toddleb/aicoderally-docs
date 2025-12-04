@@ -29,16 +29,24 @@ AICodeRally uses a modular architecture to organize 130+ reusable capabilities. 
 
 **Use This Decision Tree:**
 
-```
-Does this solve ONE specific problem? (e.g., "track time")
-├─ YES → It's a Module
-│
-NO ↓
-└─ Does it combine multiple capabilities?
-   ├─ YES, in a specific way → It's an App (or Studio App)
-   │                          Build in: apps/studio/
-   │
-   └─ NO → It's a Library or Component
+```mermaid
+graph TD
+    A["Does this solve ONE<br/>specific problem?<br/>e.g., 'track time'"]
+    B["✅ It's a Module<br/>Reusable capability<br/>Location: packages/modules/"]
+    C["Does it combine<br/>multiple capabilities<br/>in a specific way?"]
+    D["✅ It's an App<br/>Complete experience<br/>Location: apps/studio/"]
+    E["It's a Library<br/>or Component<br/>Location: packages/"]
+
+    A -->|"YES"| B
+    A -->|"NO"| C
+    C -->|"YES"| D
+    C -->|"NO"| E
+
+    style A fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    style B fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+    style C fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    style D fill:#bbdefb,stroke:#1565c0,stroke-width:2px
+    style E fill:#f8bbd0,stroke:#c2185b,stroke-width:2px
 ```
 
 ### Module Characteristics ✅
@@ -152,42 +160,53 @@ All 130+ modules are classified into categories:
 
 ### Pattern 1: Simple Addition
 
+```mermaid
+graph LR
+    A["📊 Dashboard<br/>Builder"] --> C["🎨 Feature<br/>Dashboard"]
+    B["📈 Analytics<br/>Tools"] --> C
+    D["📄 Reporting<br/>Engine"] --> C
 ```
-Feature = Module A + Module B
 
-Example:
-Performance Dashboard =
-  dashboard-builder (UI)
-  + analytics-tools (data)
-  + reporting-engine (export)
-```
+**Example:** Performance Dashboard combines UI + data analysis + export
 
 ### Pattern 2: Conditional Composition
 
+```mermaid
+graph TD
+    A["📅 Project<br/>Tracker<br/>Core"] --> B{Premium?}
+    B -->|NO| C["📅 Basic Tracker"]
+    B -->|YES| D["🤖 AI Assistant"]
+    D --> E["📅 Advanced Tracker"]
 ```
-Feature = Module A + (if tier == premium, Module B)
 
-Example:
-Basic Project Tracker = project-tracker
-Advanced Version = project-tracker + ai-assistant
+**Example:** Basic vs. Premium project tracking with optional AI
+
+### Pattern 3: Deep Composition (TACO Tracker Scope Example)
+
+```mermaid
+graph TD
+    A["🎯 TACO Scope<br/>Feature"]
+    B["🔧 Scoping Tool"]
+    C["📊 Analysis Tools"]
+    D["📈 Dashboard Builder"]
+    E["📄 Reports Engine"]
+    F["✅ Approvals Workflow"]
+
+    A --> B
+    A --> C
+    A --> D
+    A --> E
+    A --> F
+
+    style A fill:#fff3e0,stroke:#e65100,stroke-width:3px
+    style B fill:#bbdefb,stroke:#1565c0,stroke-width:2px
+    style C fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+    style D fill:#f8bbd0,stroke:#c2185b,stroke-width:2px
+    style E fill:#b2dfdb,stroke:#00695c,stroke-width:2px
+    style F fill:#ffe0b2,stroke:#e65100,stroke-width:2px
 ```
 
-### Pattern 3: Deep Composition
-
-```
-Complex Feature = Module A
-  └─ uses Module B
-    └─ uses Module C
-      └─ uses Module D
-
-Example:
-Accounting Dashboard = accounting-module
-  ├─ uses: budget-management
-  ├─ uses: approval-workflows
-  ├─ uses: reports-engine
-  │  └─ uses: data-export
-  └─ uses: compliance-990
-```
+**Example:** Scoping app combines 5+ modules for complete experience
 
 ### Real Example: TACO Tracker Scope
 

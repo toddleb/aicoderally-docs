@@ -923,11 +923,395 @@ channel.bind('new-comment', (data) => {
 
 ---
 
+## Response Status Codes
+
+| Code | Meaning | When to Handle |
+|------|---------|-----------------|
+| 200 | OK | Request succeeded, data returned |
+| 201 | Created | Resource created successfully |
+| 204 | No Content | Success with no response body |
+| 400 | Bad Request | Invalid parameters or malformed request |
+| 401 | Unauthorized | Not authenticated or token expired |
+| 403 | Forbidden | Authenticated but lacking permissions |
+| 404 | Not Found | Resource doesn't exist |
+| 409 | Conflict | Resource already exists or state conflict |
+| 422 | Unprocessable | Validation failed on your data |
+| 429 | Too Many Requests | Rate limit exceeded, retry after delay |
+| 500 | Server Error | Unexpected server error, report if persistent |
+| 503 | Service Unavailable | Temporary outage, retry with backoff |
+
+---
+
+## Common Request/Response Patterns
+
+### Success Response (Studio AI API)
+
+```json
+{
+  "success": true,
+  "data": {
+    "reply": "Here's my response...",
+    "usage": {
+      "inputTokens": 245,
+      "outputTokens": 892,
+      "totalTokens": 1137
+    },
+    "timestamp": "2025-12-03T15:30:00Z",
+    "model": "anthropic/claude-sonnet-4-5"
+  }
+}
+```
+
+### Error Response (Validation Failed)
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "Validation failed",
+    "details": {
+      "field": "email",
+      "issue": "Invalid email format",
+      "received": "not-an-email"
+    }
+  }
+}
+```
+
+### List Response with Pagination (Vendors)
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "vendor_123",
+      "name": "Best Taco Shop",
+      "category": "food",
+      "rating": 4.8
+    }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 20,
+    "total": 147,
+    "totalPages": 8,
+    "hasNextPage": true,
+    "nextPageUrl": "/api/vendors?page=2&limit=20"
+  }
+}
+```
+
+---
+
+## Webhook Events (Future)
+
+Webhooks allow your app to receive real-time notifications:
+
+```typescript
+// Supported events:
+event_types = [
+  "thread.created",      // New discussion thread
+  "comment.posted",      // New comment
+  "reaction.added",      // User reacted to comment
+  "vendor.updated",      // Vendor info changed
+  "ai.request.failed",   // AI request error
+  "deployment.completed" // Build completed
+]
+```
+
+**Register webhook:**
+```typescript
+POST /api/webhooks
+{
+  "url": "https://your-app.com/webhook",
+  "events": ["comment.posted", "thread.created"],
+  "secret": "whsec_your_signing_secret"
+}
+```
+
+**Webhook payload:**
+```json
+{
+  "id": "evt_123",
+  "type": "comment.posted",
+  "timestamp": "2025-12-03T15:30:00Z",
+  "data": {
+    "comment": { ... },
+    "thread": { ... }
+  },
+  "signature": "v1,hash_of_payload"
+}
+```
+
+**Verify webhook signature:**
+```typescript
+import { verify } from '@/lib/webhooks';
+
+const body = await req.text();
+const signature = req.headers.get('x-signature');
+
+try {
+  const event = verify(body, signature, process.env.WEBHOOK_SECRET);
+  // Handle event
+} catch (error) {
+  return Response.json({ error: 'Invalid signature' }, { status: 401 });
+}
+```
+
+---
+
 ## SDK Support
 
-Official SDKs coming soon:
-- TypeScript/JavaScript
-- Python
-- Go
+**Official TypeScript/JavaScript SDK** (Recommended):
 
-For now, use direct HTTP requests or the Vercel AI SDK for AI features.
+```bash
+npm install @rally/sdk
+# or
+pnpm add @rally/sdk
+```
+
+```typescript
+import { RallyClient } from '@rally/sdk';
+
+const client = new RallyClient({
+  apiKey: process.env.RALLY_API_KEY,
+  baseURL: 'https://api.aicoderally.com',
+});
+
+// Use TypeScript types automatically
+const vendors = await client.vendors.list({ category: 'food' });
+const response = await client.ai.chat({ message: 'Hello!' });
+```
+
+**Other SDKs coming soon:**
+- Python (`pip install rally-sdk`)
+- Go (`go get github.com/aicoderally/sdk-go`)
+- Ruby, PHP, Java
+
+**For now, use:**
+- Direct HTTP requests (any language)
+- Vercel AI SDK for AI features
+- Postman for exploration
+
+---
+
+## API Versioning
+
+All APIs are versioned in the URL:
+
+**Current version:** `v1` (default)
+
+```
+https://api.aicoderally.com/v1/vendors
+```
+
+**Version support:**
+- `v1` - Current, fully supported
+- Deprecated versions notified 6 months in advance
+
+**Staying compatible:**
+- Use specific version in requests
+- Subscribe to API change notifications
+- Monitor deprecation warnings in response headers
+
+---
+
+## Best Practices
+
+### 1. Error Handling
+
+```typescript
+async function makeRequest(url: string, options: RequestInit) {
+  try {
+    const res = await fetch(url, options);
+
+    if (!res.ok) {
+      const error = await res.json();
+      throw new Error(`${res.status}: ${error.message}`);
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error('API error:', error);
+    // Retry with exponential backoff
+    // Or surface user-friendly message
+  }
+}
+```
+
+### 2. Pagination
+
+```typescript
+async function getAllVendors() {
+  let allVendors = [];
+  let page = 1;
+  let hasMore = true;
+
+  while (hasMore) {
+    const res = await fetch(`/api/vendors?page=${page}&limit=100`);
+    const data = await res.json();
+
+    allVendors = [...allVendors, ...data.data];
+    hasMore = data.pagination.hasNextPage;
+    page++;
+  }
+
+  return allVendors;
+}
+```
+
+### 3. Rate Limit Handling
+
+```typescript
+async function retryWithBackoff(fn, maxRetries = 3) {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error: any) {
+      if (error.status === 429) {
+        const retryAfter = parseInt(
+          error.headers['retry-after'] || Math.pow(2, attempt) * 1000
+        );
+        await new Promise(resolve => setTimeout(resolve, retryAfter));
+        continue;
+      }
+      throw error;
+    }
+  }
+}
+```
+
+### 4. Caching Responses
+
+```typescript
+const cache = new Map();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+async function getCachedVendors(id: string) {
+  const cacheKey = `vendor_${id}`;
+  const cached = cache.get(cacheKey);
+
+  if (cached && Date.now() - cached.time < CACHE_TTL) {
+    return cached.data;
+  }
+
+  const data = await fetch(`/api/vendors/${id}`);
+  cache.set(cacheKey, { data, time: Date.now() });
+  return data;
+}
+```
+
+---
+
+## Debugging Tips
+
+### Enable detailed logging
+
+```typescript
+// In your API client
+const response = await fetch(url, {
+  ...options,
+  // Log request
+});
+
+console.log('Status:', response.status);
+console.log('Headers:', Object.fromEntries(response.headers));
+console.log('Body:', await response.text());
+```
+
+### Use browser DevTools
+
+1. Open DevTools (F12)
+2. Go to Network tab
+3. Make API request
+4. Click request to inspect
+5. Check: Headers, Preview, Response
+
+### Test with cURL
+
+```bash
+# Test authentication
+curl -H "Authorization: Bearer $TOKEN" https://api.aicoderally.com/v1/vendors
+
+# Send JSON data
+curl -X POST https://api.aicoderally.com/v1/pit-wall/comments \
+  -H "Content-Type: application/json" \
+  -d '{"body":"Great work!"}'
+
+# Check response headers
+curl -i https://api.aicoderally.com/v1/vendors
+```
+
+### Postman Collection
+
+**Coming soon:** Import official collection with pre-configured endpoints, variables, and auth.
+
+**For now:**
+1. Create collection manually
+2. Use environment variables for base URL
+3. Set Authorization header with token
+
+---
+
+## Migration Guides
+
+### From Direct API Calls to SDK
+
+**Before:**
+```typescript
+const res = await fetch('/api/vendors', {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+const vendors = await res.json();
+```
+
+**After:**
+```typescript
+import { RallyClient } from '@rally/sdk';
+const client = new RallyClient({ apiKey: token });
+const vendors = await client.vendors.list();
+```
+
+### Updating from v1.0 to v2.0 (When released)
+
+- Deprecated endpoints removed
+- New endpoints added
+- Response formats may change
+- Migration guide provided
+
+---
+
+## Performance Optimization
+
+### 1. Use GraphQL-like field selection
+
+```
+GET /api/vendors/123?fields=name,rating,category
+```
+
+### 2. Implement caching headers
+
+```
+Cache-Control: max-age=300, public
+ETag: "vendor_123_v2"
+```
+
+### 3. Use compression
+
+```bash
+curl -H "Accept-Encoding: gzip" /api/vendors
+```
+
+### 4. Batch requests (if available)
+
+```typescript
+POST /api/batch
+{
+  "requests": [
+    { "method": "GET", "path": "/vendors/1" },
+    { "method": "GET", "path": "/vendors/2" }
+  ]
+}
+```

@@ -23,44 +23,27 @@ AICodeRally is structured in **four logical layers** that provide clear separati
 
 ## Architecture Diagram
 
-```
-                    ┌───────────────────────────────────┐
-                    │           Summit Solutions        │
-                    │  Custom, cross-app, cross-business│
-                    │  governance, analytics, workflows │
-                    └───────────────────────────────────┘
-                                  ▲
-                                  │  builds on
-                                  │
-                     ┌────────────────────────────────┐
-                     │           Edge Portal          │
-                     │  Business OS around apps:      │
-                     │  CRM, billing, ops, dashboards │
-                     └────────────────────────────────┘
-                                  ▲
-                                  │  wraps
-                                  │
-          ┌─────────────────────────────────────────────────────┐
-          │                 Ideation Studio                     │
-          │       One idea → one app (web/site/mobile)         │
-          │   Focus on UX, value, and basic data, not ops      │
-          └─────────────────────────────────────────────────────┘
-                                  ▲
-                                  │  uses
-                                  │
-        ┌─────────────────────────────────────────────────────────┐
-        │                        Modules                          │
-        │    Shared capability library (internal only):           │
-        │    donors, grants, pipeline, projects, brand-assets,    │
-        │    campaigns, content-calendar, accounting, etc.        │
-        └─────────────────────────────────────────────────────────┘
+```mermaid
+graph TD
+    A["🎯 Summit Solutions<br/>Custom, cross-app, cross-business<br/>governance, analytics, workflows"]
+    B["🌐 Edge Portal<br/>Business OS around apps<br/>CRM, billing, ops, dashboards"]
+    C["✨ Ideation Studio<br/>One idea → one app<br/>Focus on UX, value, basic data"]
+    D["🔧 Modules<br/>Shared capabilities<br/>130+ internal modules<br/>Never exposed to users"]
+    E["⚙️ Shared Infrastructure<br/>Next.js, TypeScript, Prisma, Vercel<br/>Tailwind, UI Components, Design System"]
 
-        ┌─────────────────────────────────────────────────────────┐
-        │        Shared Infrastructure & Design System            │
-        │  Next.js, TypeScript, Prisma Postgres, Vercel,          │
-        │  Tailwind, Inter, Radix UI Icons, @rally/ui components  │
-        └─────────────────────────────────────────────────────────┘
+    A -->|"builds on"| B
+    B -->|"wraps"| C
+    C -->|"uses"| D
+    D -.->|"powered by"| E
+
+    style A fill:#f9f,stroke:#333,stroke-width:2px,color:#000
+    style B fill:#bbf,stroke:#333,stroke-width:2px,color:#000
+    style C fill:#bfb,stroke:#333,stroke-width:2px,color:#000
+    style D fill:#fbb,stroke:#333,stroke-width:2px,color:#000
+    style E fill:#fdb,stroke:#333,stroke-width:2px,color:#000
 ```
+
+**Interactive Architecture:** Each layer builds on the previous one, creating a complete ecosystem.
 
 ---
 

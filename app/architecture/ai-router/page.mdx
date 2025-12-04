@@ -28,32 +28,65 @@ The AI Router is a production-grade system that intelligently orchestrates AI re
 
 ## System Architecture
 
+```mermaid
+graph TD
+    A["📱 Client Applications<br/>Studio, Website, Mobile, APIs"]
+    B["🎯 RallyAIRouter<br/>Request Orchestrator"]
+
+    C["💰 Budget Service<br/>4-Level Hierarchy<br/>Project > Plan > User > Global"]
+    D["🔤 Prompt Selector<br/>A/B Testing<br/>Auto-Winner Promotion"]
+    E["💾 Cache Service<br/>Exact + Semantic<br/>30-50% Savings"]
+    F["🤖 Provider Selector<br/>3-Tier Models<br/>Fast/Balanced/Powerful"]
+
+    G["🔀 Provider Selection Engine"]
+
+    H["🧠 Anthropic Claude<br/>Technical Analysis"]
+    I["🔥 OpenAI GPT-4<br/>Sprint Planning"]
+    J["✨ Google Gemini<br/>Business Validation"]
+    K["⚡ Fallback Provider"]
+
+    L["📊 Logging & Metrics"]
+    M["🗄️ PostgreSQL<br/>Cache, Budgets, Logs"]
+
+    A --> B
+    B --> C
+    B --> D
+    B --> E
+    B --> F
+
+    C --> G
+    D --> G
+    E --> G
+    F --> G
+
+    G --> H
+    G --> I
+    G --> J
+    G --> K
+
+    H --> L
+    I --> L
+    J --> L
+    K --> L
+
+    L --> M
+
+    style A fill:#e1f5ff,stroke:#01579b,stroke-width:2px
+    style B fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    style C fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+    style D fill:#e0f2f1,stroke:#004d40,stroke-width:2px
+    style E fill:#f1f8e9,stroke:#33691e,stroke-width:2px
+    style F fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    style G fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    style H fill:#bbdefb,stroke:#1565c0,stroke-width:2px
+    style I fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+    style J fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+    style K fill:#f8bbd0,stroke:#c2185b,stroke-width:2px
+    style L fill:#e0e0e0,stroke:#424242,stroke-width:2px
+    style M fill:#eceff1,stroke:#263238,stroke-width:2px
 ```
-Client Applications (Studio, Website, Mobile, APIs)
-                    ↓
-              RallyAIRouter
-         (Main Request Orchestrator)
-                    ↓
-    ┌───────────┬──────────┬───────────┐
-    ↓           ↓          ↓           ↓
- Budget      Prompt     Cache      Provider
- Service    Selector   Service    Selector
-    ↓           ↓          ↓           ↓
-    └───────────┴──────────┴───────────┘
-                    ↓
-         Provider Selection Engine
-                    ↓
-    ┌───────────────┬───────────────┬──────────────┐
-    ↓               ↓               ↓              ↓
-Anthropic       OpenAI           Google      Fallback
- Claude          GPT-4           Gemini       Provider
-                                            (if needed)
-                    ↓
-    Logging & Metrics Collection
-                    ↓
-         PostgreSQL Database
-    (Cache, Budgets, Logs, Metrics)
-```
+
+**Request Flow:** From client request through intelligent routing to provider and back through analytics pipeline.
 
 ---
 

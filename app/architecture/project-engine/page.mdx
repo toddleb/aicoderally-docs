@@ -28,67 +28,43 @@ The Rally Project Engine is the central orchestrator for managing AI-assisted pr
 
 Every project progresses through well-defined states:
 
+```mermaid
+graph TD
+    A["📋 INTAKE_RECEIVED<br/>Created via launch API<br/>Tier specified<br/>Details captured"]
+    B["🤖 BLUEPRINT_DRAFTED<br/>AI generates blueprint<br/>5-10 minutes<br/>Ready for review"]
+    C["👤 BLUEPRINT_APPROVED<br/>Human reviews & approves<br/>Can request changes<br/>AI refines if needed"]
+    D["📑 TASKS_GENERATED<br/>AI breaks into task pack<br/>Execution optimized<br/>Dependencies resolved"]
+    E["⚙️ BUILD_IN_PROGRESS<br/>Builder AI executes tasks<br/>Results captured<br/>Blockers surfaced"]
+    F["🔍 UNDER_REVIEW<br/>Quality evaluation<br/>Metrics calculated<br/>Issues flagged"]
+    G["✅ ACTIVE<br/>Live in production<br/>Monitoring active<br/>Feedback collected"]
+    H["⏸️ ON_HOLD<br/>Temporarily paused<br/>Can be resumed<br/>Reason recorded"]
+    I["🏁 COMPLETED<br/>Finished/Archived<br/>Metrics recorded<br/>Lessons captured"]
+
+    A --> B
+    B --> C
+    C -->|"Approved"| D
+    C -->|"Changes needed"| B
+    D --> E
+    E --> F
+    F -->|"Quality OK"| G
+    F -->|"Issues found"| E
+    G --> H
+    G --> I
+    H --> G
+    H --> I
+
+    style A fill:#e3f2fd,stroke:#1565c0,stroke-width:2px
+    style B fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
+    style C fill:#fff3e0,stroke:#e65100,stroke-width:2px
+    style D fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px
+    style E fill:#fce4ec,stroke:#880e4f,stroke-width:2px
+    style F fill:#fff9c4,stroke:#f57f17,stroke-width:2px
+    style G fill:#c8e6c9,stroke:#2e7d32,stroke-width:2px
+    style H fill:#ffccbc,stroke:#d84315,stroke-width:2px
+    style I fill:#e0e0e0,stroke:#424242,stroke-width:2px
 ```
-1. INTAKE_RECEIVED
-   ├─ Created via /launch or /projects/new
-   ├─ Tier specified (Studio, Edge, Summit)
-   ├─ Initial intake details captured
-   └─ Contact information stored
 
-2. BLUEPRINT_DRAFTED (AI Generated)
-   ├─ AI generates initial blueprint (5-10 min)
-   ├─ Internal tools used for generation
-   ├─ Not shown until approved
-   └─ Ready for human review
-
-3. BLUEPRINT_APPROVED (Human Gate)
-   ├─ Human/client/operator reviews AI blueprint
-   ├─ Can approve as-is or request changes
-   ├─ AI refines blueprint based on feedback
-   ├─ Approval unlocks next stages
-   └─ Critical decision point
-
-4. TASKS_GENERATED (AI Preparation)
-   ├─ AI breaks blueprint into task pack
-   ├─ Task cards created with full context
-   ├─ Execution order optimized
-   ├─ Dependencies resolved
-   └─ Ready for builder execution
-
-5. BUILD_IN_PROGRESS (Execution)
-   ├─ Builder AI executes approved tasks
-   ├─ Tasks marked as in-progress
-   ├─ Results captured for each task
-   ├─ Blockers surfaced immediately
-   └─ Real-time status available
-
-6. UNDER_REVIEW (Quality Gate)
-   ├─ Human/Review Agent evaluates output
-   ├─ Quality metrics calculated
-   ├─ Drift index updated
-   ├─ Issues flagged for correction
-   └─ Decision point: proceed, revise, or hold
-
-7. ACTIVE (Live)
-   ├─ Project accepted and live
-   ├─ Serving production traffic
-   ├─ Monitoring active
-   ├─ Feedback collected
-   └─ Can be paused or completed
-
-8. ON_HOLD (Paused)
-   ├─ Project temporarily paused
-   ├─ Reason recorded
-   ├─ Can be resumed
-   └─ Useful for awaiting decisions
-
-9. COMPLETED (Finished)
-   ├─ Project finished or archived
-   ├─ Final metrics recorded
-   ├─ Feedback summarized
-   ├─ Lessons learned captured
-   └─ Available for historical reference
-```
+**Project Flow:** From intake through approval gates to live execution and completion.
 
 ---
 

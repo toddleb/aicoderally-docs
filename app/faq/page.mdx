@@ -572,12 +572,364 @@ Yes, you can modify AICodeRally for your own use. Check the license for redistri
 
 ---
 
+## Advanced Questions
+
+### Can I use AICodeRally offline?
+
+No, AICodeRally requires cloud connectivity:
+- Vercel hosting (cloud deployment)
+- Prisma Postgres (database)
+- OAuth providers (authentication)
+
+**For local development:** Use `pnpm dev` with local database and auth.
+
+---
+
+### How do I implement custom authentication?
+
+AICodeRally uses **NextAuth v5**. To add custom provider:
+
+**1. Create provider in `auth.ts`:**
+```typescript
+export const { handlers, auth } = NextAuth({
+  providers: [
+    {
+      id: "custom",
+      name: "Custom Auth",
+      type: "oauth",
+      authorization: { params: { scope: "openid profile email" } },
+      userinfo: "https://your-auth-server/user",
+      profile(profile) {
+        return { id: profile.sub, name: profile.name, email: profile.email };
+      }
+    }
+  ]
+});
+```
+
+**2. Configure environment variables:**
+```bash
+AUTH_CUSTOM_ID="your_client_id"
+AUTH_CUSTOM_SECRET="your_secret"
+```
+
+See [NextAuth documentation](https://authjs.dev/guides/providers).
+
+---
+
+### How do I add a custom module to Studio?
+
+**1. Create module in `packages/modules/my-module/`**
+
+**2. Export from `packages/modules/index.ts`:**
+```typescript
+export * from './my-module';
+```
+
+**3. Create Studio page at `apps/studio/app/modules/my-module/page.tsx`**
+
+**4. Register in `apps/studio/lib/apps.ts`:**
+```typescript
+export const studioApps = [
+  // ... existing apps
+  {
+    id: "my-module",
+    name: "My Module",
+    description: "What it does",
+    component: lazy(() => import("@/modules/my-module")),
+  },
+];
+```
+
+**5. Rebuild:**
+```bash
+pnpm build
+```
+
+---
+
+### What's the best way to structure large modules?
+
+**Recommended structure:**
+
+```
+packages/modules/my-module/
+├── components/
+│   ├── Dashboard.tsx
+│   ├── Forms/
+│   │   ├── InputForm.tsx
+│   │   └── SettingsForm.tsx
+│   └── index.ts
+├── hooks/
+│   ├── useData.ts
+│   └── index.ts
+├── lib/
+│   ├── api.ts
+│   ├── db.ts
+│   └── utils.ts
+├── types.ts          # All TypeScript types
+├── index.ts          # Public exports only
+├── package.json
+└── README.md
+```
+
+**Key principles:**
+- Keep public API clean in `index.ts`
+- Use folders for organization
+- Separate logic from components
+- Export types for consumers
+
+---
+
+### How do I implement real-time features?
+
+AICodeRally uses **Pusher** for real-time:
+
+**1. Set environment variables:**
+```bash
+PUSHER_APP_ID="your_app_id"
+PUSHER_SECRET="your_secret"
+NEXT_PUBLIC_PUSHER_KEY="your_key"
+NEXT_PUBLIC_PUSHER_CLUSTER="us2"
+```
+
+**2. Create subscription on client:**
+```typescript
+'use client';
+import Pusher from 'pusher-js';
+
+const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
+  cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
+});
+
+const channel = pusher.subscribe('my-channel');
+channel.bind('my-event', (data) => {
+  console.log('Received:', data);
+});
+```
+
+**3. Broadcast from server:**
+```typescript
+import Pusher from 'pusher';
+
+const pusher = new Pusher({
+  appId: process.env.PUSHER_APP_ID!,
+  key: process.env.NEXT_PUBLIC_PUSHER_KEY!,
+  secret: process.env.PUSHER_SECRET!,
+  cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
+});
+
+await pusher.trigger('my-channel', 'my-event', {
+  message: 'Hello from server'
+});
+```
+
+See [Pusher documentation](https://pusher.com/docs) for advanced features.
+
+---
+
+### How do I implement file uploads?
+
+AICodeRally uses **Vercel Blob** for file storage:
+
+**1. Set environment variable:**
+```bash
+BLOB_READ_WRITE_TOKEN="your_blob_token"
+```
+
+**2. Upload file:**
+```typescript
+import { put } from '@vercel/blob';
+
+const blob = await put(`uploads/${file.name}`, file, {
+  access: 'public',
+});
+
+console.log(blob.url); // Public URL to file
+```
+
+**3. Download/stream file:**
+```typescript
+const response = await fetch(blob.url);
+const buffer = await response.arrayBuffer();
+```
+
+See [Vercel Blob documentation](https://vercel.com/docs/storage/vercel-blob).
+
+---
+
+### How do I optimize database queries?
+
+**1. Use `select` to limit fields:**
+```typescript
+const user = await prisma.user.findUnique({
+  where: { id: userId },
+  select: {
+    id: true,
+    email: true,
+    name: true,
+    // Don't load large fields
+  },
+});
+```
+
+**2. Add indexes:**
+```prisma
+model User {
+  id String @id
+  email String @unique
+  name String
+
+  @@index([createdAt])
+}
+```
+
+**3. Use pagination:**
+```typescript
+const users = await prisma.user.findMany({
+  take: 20,      // Limit
+  skip: 0,       // Offset
+  orderBy: { createdAt: 'desc' },
+});
+```
+
+**4. Enable Prisma Accelerate:**
+```bash
+PRISMA_DATABASE_URL="prisma+postgres://accelerate..."
+```
+
+---
+
+### How do I implement feature flags?
+
+**Option 1: Environment-based**
+```typescript
+const featureEnabled = process.env.NEXT_PUBLIC_FEATURE_X === 'true';
+
+if (featureEnabled) {
+  return <NewFeature />;
+}
+```
+
+**Option 2: Database-based (persistent)**
+```typescript
+const flag = await prisma.featureFlag.findUnique({
+  where: { key: 'my-feature' },
+});
+
+if (flag?.enabled) {
+  return <NewFeature />;
+}
+```
+
+**Option 3: User-based**
+```typescript
+const user = await auth();
+if (user?.beta) {
+  return <BetaFeature />;
+}
+```
+
+---
+
+### What's the best practice for error logging?
+
+**1. Use console (development):**
+```typescript
+console.error('Database error:', error);
+```
+
+**2. Send to monitoring service (production):**
+```typescript
+import * as Sentry from "@sentry/nextjs";
+
+Sentry.captureException(error);
+```
+
+**3. Log to database:**
+```typescript
+await prisma.errorLog.create({
+  data: {
+    message: error.message,
+    stack: error.stack,
+    context: 'vendor_fetch',
+    severity: 'high',
+  },
+});
+```
+
+---
+
+### How do I implement caching strategies?
+
+**1. Client-side (React Query):**
+```typescript
+import { useQuery } from '@tanstack/react-query';
+
+const { data } = useQuery({
+  queryKey: ['vendors'],
+  queryFn: () => fetch('/api/vendors').then(r => r.json()),
+  staleTime: 5 * 60 * 1000, // 5 minutes
+});
+```
+
+**2. Server-side (HTTP headers):**
+```typescript
+return new Response(JSON.stringify(vendors), {
+  headers: {
+    'Cache-Control': 'public, max-age=3600, s-maxage=86400',
+  },
+});
+```
+
+**3. Database (Prisma Accelerate):**
+```bash
+# Enables automatic query caching
+PRISMA_DATABASE_URL="prisma+postgres://accelerate..."
+```
+
+---
+
+### How do I implement analytics?
+
+**Option 1: Vercel Analytics**
+```bash
+npm install @vercel/analytics
+```
+
+```typescript
+import { Analytics } from '@vercel/analytics/react';
+
+export default function App() {
+  return (
+    <>
+      <YourApp />
+      <Analytics />
+    </>
+  );
+}
+```
+
+**Option 2: Custom events:**
+```typescript
+import { track } from '@/lib/analytics';
+
+track('vendor_viewed', {
+  vendorId: vendor.id,
+  category: vendor.category,
+  timestamp: new Date().toISOString(),
+});
+```
+
+---
+
 ## Still have questions?
 
 **Can't find your answer?**
 
-1. Search the documentation
-2. Check GitHub Issues
-3. Email: todd@aicoderally.com
+1. **Search the documentation** - Use Ctrl+F
+2. **Check GitHub Issues** - https://github.com/AICodeRally/aicoderally-stack/issues
+3. **Read the code** - Open source, learn by example
+4. **Email** - todd@aicoderally.com
 
 We're here to help!
