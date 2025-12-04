@@ -612,6 +612,294 @@ Access to fetch blocked by CORS policy
 
 ---
 
+## Configuration Issues
+
+### "API key not found in environment"
+
+**Error:**
+```
+Error: ANTHROPIC_API_KEY is undefined
+```
+
+**Solution:**
+
+1. **Check .env.local file exists:**
+   ```bash
+   ls -la .env.local
+   ```
+
+2. **Verify variable is set:**
+   ```bash
+   cat .env.local | grep ANTHROPIC_API_KEY
+   ```
+
+3. **Reload environment (if using IDE):**
+   - VSCode: Restart terminal
+   - Other: Source the file manually:
+   ```bash
+   source .env.local
+   ```
+
+4. **For Vercel deployment:**
+   - Go to Project → Settings → Environment Variables
+   - Click "Add New"
+   - Name: `ANTHROPIC_API_KEY`
+   - Value: Your API key
+   - Select environments: Production, Preview, Development
+   - Click "Save and Redeploy"
+
+---
+
+### "Wrong Node.js version"
+
+**Error:**
+```
+Error: The engine "node" is incompatible with this module. Expected version ">=18.0.0", got "16.0.0"
+```
+
+**Solution:**
+
+1. **Check current version:**
+   ```bash
+   node --version
+   ```
+
+2. **Update Node.js:**
+   ```bash
+   # Using nvm (recommended)
+   nvm install 20
+   nvm use 20
+
+   # Or download from nodejs.org
+   ```
+
+3. **Verify pnpm compatibility:**
+   ```bash
+   pnpm --version
+   # Should be 8.0 or higher
+   ```
+
+---
+
+### "Prisma schema out of sync"
+
+**Error:**
+```
+Error: Schema in database or migrations is out of sync
+```
+
+**Solution:**
+
+1. **Check current schema:**
+   ```bash
+   npx prisma db execute --stdin <<< "SELECT * FROM information_schema.tables;"
+   ```
+
+2. **For development (ONLY):**
+   ```bash
+   # Reset and apply schema
+   npx prisma db push --force-reset
+   ```
+
+3. **For production:**
+   ```bash
+   # Create new migration
+   npx prisma migrate dev --name fix_schema
+
+   # Deploy migration
+   npx prisma migrate deploy
+   ```
+
+---
+
+## Package & Dependency Issues
+
+### "npm/pnpm cache corruption"
+
+**Error:**
+```
+ERESOLVE unable to resolve dependency tree
+```
+
+**Solution:**
+
+```bash
+# Clear package manager cache
+pnpm store prune
+
+# Or for npm
+npm cache clean --force
+
+# Reinstall everything
+rm -rf node_modules pnpm-lock.yaml
+pnpm install
+```
+
+---
+
+### "Module version conflicts"
+
+**Error:**
+```
+ERR! peer dep missing: @types/node@>=16.0.0, required by some-package@1.0.0
+```
+
+**Solution:**
+
+```bash
+# Update specific package
+pnpm add @types/node@latest
+
+# Or check package.json constraints
+cat package.json | grep "@types/node"
+
+# Remove and reinstall
+pnpm remove @types/node
+pnpm add -D @types/node@^20
+```
+
+---
+
+### "Turbo/monorepo build issues"
+
+**Error:**
+```
+Error: Cannot find module in workspace
+```
+
+**Solution:**
+
+```bash
+# Rebuild turbo cache
+pnpm turbo prune --scope=@rally/studio
+
+# Or clear all cache
+rm -rf .turbo
+pnpm install
+pnpm build
+```
+
+---
+
+## Git & Version Control
+
+### "Git merge conflicts in lock files"
+
+**Error:**
+```
+conflict in pnpm-lock.yaml
+```
+
+**Solution:**
+
+```bash
+# Don't manually edit lock files - regenerate
+git checkout --ours pnpm-lock.yaml
+pnpm install
+git add pnpm-lock.yaml
+git commit -m "Resolve lock file conflict"
+```
+
+---
+
+### "Detached HEAD state"
+
+**Error:**
+```
+HEAD detached at <commit-hash>
+```
+
+**Solution:**
+
+```bash
+# Return to main branch
+git checkout main
+
+# Or create new branch from detached state
+git checkout -b recovery-branch
+```
+
+---
+
+### "Uncommitted changes blocking operations"
+
+**Error:**
+```
+error: Your local changes to the following files would be overwritten by merge
+```
+
+**Solution:**
+
+```bash
+# Option 1: Commit changes
+git add .
+git commit -m "Work in progress"
+
+# Option 2: Stash changes temporarily
+git stash
+
+# Option 3: Discard changes (⚠️ IRREVERSIBLE)
+git checkout -- .
+```
+
+---
+
+## Network & Connection Issues
+
+### "Cannot resolve DNS"
+
+**Error:**
+```
+getaddrinfo ENOTFOUND api.anthropic.com
+```
+
+**Solution:**
+
+```bash
+# Check internet connection
+ping google.com
+
+# Verify DNS
+nslookup api.anthropic.com
+
+# Test API endpoint directly
+curl https://api.anthropic.com/status
+```
+
+---
+
+### "ECONNREFUSED on localhost"
+
+**Error:**
+```
+Error: connect ECONNREFUSED 127.0.0.1:3000
+```
+
+**Solution:**
+
+1. **Verify service is running:**
+   ```bash
+   pnpm dev
+   ```
+
+2. **Check port availability:**
+   ```bash
+   netstat -tulpn | grep 3000
+   ```
+
+3. **Kill process on port:**
+   ```bash
+   lsof -i :3000
+   kill -9 <PID>
+   ```
+
+4. **Use different port:**
+   ```bash
+   PORT=3005 pnpm dev
+   ```
+
+---
+
 ## Still Having Issues?
 
 ### 1. Check Logs

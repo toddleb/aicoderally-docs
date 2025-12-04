@@ -546,3 +546,78 @@ NEXT_PUBLIC_ADMIN_PASSWORD="aicoderally2025"
 ```
 
 For the complete list, see `.env.example` in the repository root.
+
+---
+
+## Complete Reference Table
+
+Complete inventory of all environment variables with sources and purposes:
+
+| Variable | Source | Type | Purpose | Required |
+|----------|--------|------|---------|----------|
+| **DATABASE_URL** | Prisma Console | Database | Dev database connection | ✅ Yes |
+| **DIRECT_URL** | Prisma Console | Database | Dev direct DB access | ✅ Yes |
+| **PRISMA_DATABASE_URL** | Prisma Accelerate | Database | Connection pooling (optional) | ⚠️ Optional |
+| **AUTH_SECRET** | Generate (openssl) | Auth | NextAuth signing key | ✅ Yes |
+| **NEXTAUTH_URL** | Manual | Auth | OAuth callback URL | ✅ Yes |
+| **AUTH_GITHUB_ID** | GitHub OAuth App | OAuth | GitHub app client ID | ✅ Yes |
+| **AUTH_GITHUB_SECRET** | GitHub OAuth App | OAuth | GitHub app secret | ✅ Yes |
+| **GOOGLE_CLIENT_ID** | Google Console | OAuth | Google OAuth client ID | ⚠️ Edge only |
+| **GOOGLE_CLIENT_SECRET** | Google Console | OAuth | Google OAuth secret | ⚠️ Edge only |
+| **APPLE_ID** | Apple Developer | OAuth | Apple app ID | ⚠️ Edge only |
+| **APPLE_SECRET** | Apple Developer | OAuth | Apple app secret | ⚠️ Edge only |
+| **ANTHROPIC_API_KEY** | Anthropic Console | AI | Claude API access | ✅ Yes |
+| **ANTHROPIC_ADMIN_KEY** | Anthropic Console | AI | Admin operations | ⚠️ Optional |
+| **ANTHROPIC_ORG_ID** | Anthropic Console | AI | Organization ID | ⚠️ Optional |
+| **ANTHROPIC_BASE_URL** | Vercel AI Gateway | AI | Route Claude through gateway | ⚠️ Optional |
+| **OPENAI_API_KEY** | OpenAI Platform | AI | GPT-4/Codex access | ✅ Yes |
+| **OPENAI_ADMIN_KEY** | OpenAI Platform | AI | Admin operations | ⚠️ Optional |
+| **OPENAI_ORG_ID** | OpenAI Platform | AI | Organization ID | ⚠️ Optional |
+| **OPENAI_PROJECT_ID** | OpenAI Platform | AI | Project ID | ⚠️ Optional |
+| **OPENAI_BASE_URL** | Vercel AI Gateway | AI | Route GPT through gateway | ⚠️ Optional |
+| **GOOGLE_API_KEY** | Google AI Studio | AI | Gemini API access | ✅ Yes |
+| **GOOGLE_BASE_URL** | Vercel AI Gateway | AI | Route Gemini through gateway | ⚠️ Optional |
+| **HUGGING_FACE_API_KEY** | Hugging Face | AI | Open source models | ⚠️ Optional |
+| **VERCEL_OIDC_TOKEN** | Vercel CLI (auto) | AI Gateway | Authentication token | ⚠️ Gateway only |
+| **AI_GATEWAY_API_KEY** | Vercel Dashboard | AI Gateway | Alternative auth method | ⚠️ Gateway only |
+| **AI_GATEWAY_URL** | Vercel AI Gateway | AI Gateway | Unified endpoint | ⚠️ Gateway only |
+| **PUSHER_APP_ID** | Pusher Dashboard | Realtime | Pusher app ID | ⚠️ Realtime only |
+| **PUSHER_SECRET** | Pusher Dashboard | Realtime | Pusher secret | ⚠️ Realtime only |
+| **NEXT_PUBLIC_PUSHER_KEY** | Pusher Dashboard | Realtime | Public key (safe for client) | ⚠️ Realtime only |
+| **NEXT_PUBLIC_PUSHER_CLUSTER** | Pusher Dashboard | Realtime | Region cluster | ⚠️ Realtime only |
+| **BLOB_READ_WRITE_TOKEN** | Vercel Storage | Storage | File upload token | ⚠️ Optional |
+| **GITHUB_TOKEN** | GitHub Settings | Tools | Repository access | ⚠️ Optional |
+| **VERCEL_TOKEN** | Vercel Account | Tools | Deployment management | ⚠️ Optional |
+| **RESEND_API_KEY** | Resend Console | Email | Transactional emails | ⚠️ Optional |
+| **EMAIL_FROM** | Manual | Email | Sender email address | ⚠️ Email only |
+| **NEXT_PUBLIC_APP_URL** | Manual | Config | App public URL | ✅ Yes |
+| **ADMIN_EMAILS** | Manual | Config | Admin user emails | ⚠️ Optional |
+| **NEXT_PUBLIC_ADMIN_PASSWORD** | Manual | Config | Admin dashboard password | ⚠️ Optional |
+
+### Legend
+
+- **✅ Yes** = Required for all deployments
+- **⚠️ Optional** = Only required for specific features/apps
+- **Edge only** = Only needed for Edge app
+- **Realtime only** = Only needed if using Pusher
+- **Gateway only** = Only needed if using AI Gateway
+- **Email only** = Only needed if using Resend
+
+### Source Locations Quick Reference
+
+| Source | URL | Notes |
+|--------|-----|-------|
+| Prisma Console | https://console.prisma.io/ | Database URLs, Accelerate key |
+| GitHub OAuth | https://github.com/settings/applications/new | OAuth client ID/secret |
+| Google Console | https://console.cloud.google.com/apis/credentials | OAuth, Gemini API key |
+| Apple Developer | https://developer.apple.com/account/ | Apple OAuth credentials |
+| Anthropic Console | https://console.anthropic.com/ | Claude API keys |
+| OpenAI Platform | https://platform.openai.com/api-keys | GPT API keys, org ID |
+| Google AI Studio | https://makersuite.google.com/app/apikey | Gemini API key |
+| Hugging Face | https://huggingface.co/settings/tokens | Model access tokens |
+| Vercel Dashboard | https://vercel.com/dashboard | OIDC token, AI Gateway config |
+| Pusher Dashboard | https://dashboard.pusher.com/ | Realtime credentials |
+| Vercel Storage | Vercel Dashboard → Storage → Blob | Blob token |
+| GitHub Settings | https://github.com/settings/tokens | Personal access tokens |
+| Vercel Account | https://vercel.com/account/tokens | Vercel tokens |
+| Resend Console | https://resend.com/api-keys | Email API key |

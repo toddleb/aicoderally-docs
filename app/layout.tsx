@@ -33,6 +33,7 @@ export default function RootLayout({
                 <a href="/architecture/unified" className="nav-link">System Architecture</a>
                 <a href="/tech-stack" className="nav-link">Tech Stack</a>
                 <a href="/modules" className="nav-link">Modules</a>
+                <a href="/development" className="nav-link">Development</a>
                 <a href="/tools/rally-ai" className="nav-link">Rally AI</a>
                 <a href="/franchise" className="nav-link">Franchise</a>
                 <a href="/deployment" className="nav-link">Deployment</a>
